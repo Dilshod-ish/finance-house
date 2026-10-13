@@ -11,7 +11,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createdAt, currencyCode, pk } from './columns.js';
-import { MEMBERSHIP_ROLES, inList } from './domain.js';
+import { MEMBERSHIP_ROLES, inList } from '@fincore/shared';
 
 export const organization = pgTable('organization', {
   id: pk(),

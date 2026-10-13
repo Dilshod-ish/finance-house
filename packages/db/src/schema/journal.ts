@@ -12,7 +12,7 @@ import {
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 import { createdAt, currencyCode, money, pk, rate } from './columns.js';
-import { ENTRY_KINDS, SIDES, inList, type EntryKind, type Side } from './domain.js';
+import { ENTRY_KINDS, SIDES, inList, type EntryKind, type Side } from '@fincore/shared';
 import { account, article, counterparty, direction, glAccount } from './reference.js';
 import { appUser, legalEntity, organization } from './tenancy.js';
 

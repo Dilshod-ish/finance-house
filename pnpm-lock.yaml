@@ -168,6 +168,10 @@ importers:
         version: 4.1.11(@types/node@22.20.0)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@22.20.0)(esbuild@0.28.2)(tsx@4.23.12)(yaml@2.9.0))
 
   packages/region-packs/_contract:
+    dependencies:
+      '@fincore/shared':
+        specifier: workspace:*
+        version: link:../../shared
     devDependencies:
       '@fincore/eslint-config':
         specifier: workspace:*
@@ -186,6 +190,13 @@ importers:
         version: 4.1.11(@types/node@22.20.0)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@22.20.0)(esbuild@0.28.2)(tsx@4.23.12)(yaml@2.9.0))
 
   packages/region-packs/uz:
+    dependencies:
+      '@fincore/region-pack-contract':
+        specifier: workspace:*
+        version: link:../_contract
+      '@fincore/shared':
+        specifier: workspace:*
+        version: link:../../shared
     devDependencies:
       '@fincore/eslint-config':
         specifier: workspace:*

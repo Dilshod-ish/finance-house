@@ -1,8 +1,12 @@
 /**
- * Domain vocabularies. Deliberately plain text columns with CHECK constraints
- * rather than Postgres enums: `ALTER TYPE ... ADD VALUE` cannot run inside the
- * transaction drizzle-kit wraps migrations in, and this vocabulary grows every
- * time a module lands (inventory adds entry kinds, etc.).
+ * Domain vocabularies, shared by the schema (which turns them into CHECK
+ * constraints), the ledger and the region packs. They live here rather than in
+ * `@fincore/db` because they describe the business, not its storage — a region
+ * pack must not have to depend on the database package to name a flow type.
+ *
+ * Plain string unions, not Postgres enums: `ALTER TYPE ... ADD VALUE` cannot
+ * run inside the transaction drizzle-kit wraps migrations in, and this
+ * vocabulary grows every time a module lands.
  */
 export const ACCOUNT_KINDS = ['bank', 'cash', 'card', 'ewallet', 'acquiring', 'virtual'] as const;
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];

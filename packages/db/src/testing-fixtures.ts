@@ -31,9 +31,11 @@ export async function seedOrg(
     await tx`
       insert into organization (id, name, base_currency, country_code, region_pack)
       values (${orgId}, ${name}, ${currency}, 'UZ', 'uz')`;
+    // No legal form or tax regime: both are region-pack data (CLAUDE.md §4),
+    // and a fixture has no business naming a country's tax regime.
     await tx`
-      insert into legal_entity (id, org_id, name, legal_form, functional_currency, tax_regime)
-      values (${legalEntityId}, ${orgId}, ${`${name} MCHJ`}, 'MCHJ', ${currency}, 'qqs_foyda')`;
+      insert into legal_entity (id, org_id, name, functional_currency)
+      values (${legalEntityId}, ${orgId}, ${`${name} Ltd`}, ${currency})`;
     await tx`
       insert into gl_account (id, org_id, code, name, type, normal_side) values
         (${cashGl},    ${orgId}, '1010', 'Cash and banks', 'asset',   'D'),

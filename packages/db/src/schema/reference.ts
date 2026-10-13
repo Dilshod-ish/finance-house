@@ -23,7 +23,7 @@ import {
   type FlowType,
   type GlAccountType,
   type Side,
-} from './domain.js';
+} from '@fincore/shared';
 import { legalEntity, organization } from './tenancy.js';
 
 /** Where money physically sits. I5 reads `kind` to decide what is cash. */
