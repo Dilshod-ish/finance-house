@@ -9,3 +9,6 @@ coverage/
 !.env.example
 .DS_Store
 .turbo/
+
+# TypeScript incremental build caches: machine-specific, never shared.
+*.tsbuildinfo
