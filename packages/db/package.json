@@ -19,13 +19,28 @@
     "test": "vitest run",
     "test:unit": "vitest run",
     "coverage": "vitest run --coverage",
-    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/cli/migrate.cli.ts",
+    "db:reset": "tsx src/cli/reset.cli.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "db:migrate:down": "tsx src/cli/migrate-down.cli.ts"
   },
   "devDependencies": {
     "@fincore/eslint-config": "workspace:*",
     "@fincore/tsconfig": "workspace:*",
     "eslint": "10.9.1",
     "typescript": "5.9.3",
-    "vitest": "4.1.11"
+    "vitest": "4.1.11",
+    "drizzle-kit": "0.31.10",
+    "tsx": "4.23.12",
+    "@testcontainers/postgresql": "12.1.0",
+    "testcontainers": "12.1.0",
+    "@fincore/shared": "workspace:*"
+  },
+  "dependencies": {
+    "@fincore/shared": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "postgres": "3.4.9"
   }
 }
