@@ -1,0 +1,41 @@
+{
+  "name": "fincore",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck --concurrency=4",
+    "lint": "turbo run lint --concurrency=4",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "turbo run test --concurrency=4",
+    "test:unit": "turbo run test:unit --concurrency=4",
+    "test:integration": "turbo run test:integration",
+    "coverage": "turbo run coverage --concurrency=4",
+    "db:migrate": "pnpm --filter @fincore/db db:migrate",
+    "db:seed": "pnpm --filter @fincore/seed db:seed",
+    "db:reset": "pnpm --filter @fincore/db db:reset && pnpm --filter @fincore/seed db:seed",
+    "db:generate": "pnpm --filter @fincore/db db:generate",
+    "infra:up": "docker compose -f docker/docker-compose.yml up -d",
+    "infra:down": "docker compose -f docker/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "@fincore/eslint-config": "workspace:*",
+    "@fincore/tsconfig": "workspace:*",
+    "@types/node": "22.20.0",
+    "eslint": "10.9.1",
+    "prettier": "3.9.6",
+    "turbo": "2.10.12",
+    "typescript": "5.9.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "unrs-resolver"
+    ]
+  }
+}

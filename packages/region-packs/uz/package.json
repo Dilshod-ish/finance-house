@@ -1,0 +1,35 @@
+{
+  "name": "@fincore/region-pack-uz",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Uzbekistan region pack: tax, legal forms, CoA, FX source",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "coverage": "vitest run --coverage",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
+  },
+  "devDependencies": {
+    "@fincore/eslint-config": "workspace:*",
+    "@fincore/tsconfig": "workspace:*",
+    "eslint": "10.9.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "@fincore/region-pack-contract": "workspace:*",
+    "@fincore/shared": "workspace:*"
+  }
+}

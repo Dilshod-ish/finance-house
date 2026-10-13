@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS "journal_line";
+DROP TABLE IF EXISTS "journal_entry";
+DROP TABLE IF EXISTS "audit_log";
+DROP TABLE IF EXISTS "period_lock";
+DROP TABLE IF EXISTS "fx_rate";
+DROP TABLE IF EXISTS "article";
+DROP TABLE IF EXISTS "gl_account";
+DROP TABLE IF EXISTS "direction";
+DROP TABLE IF EXISTS "counterparty";
+DROP TABLE IF EXISTS "account";
+DROP TABLE IF EXISTS "membership";
+DROP TABLE IF EXISTS "legal_entity";
+DROP TABLE IF EXISTS "organization";
+DROP TABLE IF EXISTS "app_user";

@@ -1,0 +1,31 @@
+{
+  "name": "@fincore/inventory",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Stock valuation and period recalculation",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "coverage": "vitest run --coverage",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
+  },
+  "devDependencies": {
+    "@fincore/eslint-config": "workspace:*",
+    "@fincore/tsconfig": "workspace:*",
+    "eslint": "10.9.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  }
+}

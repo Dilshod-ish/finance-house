@@ -1,1 +1,5 @@
-{ "permissions": { "allow": ["Bash(git config:*)", "Bash(git rebase:*)"] } }
+{
+  "permissions": {
+    "allow": ["Bash(git config:*)", "Bash(git rebase:*)"]
+  }
+}

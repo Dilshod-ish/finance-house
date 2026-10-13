@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+.next/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.turbo/
+
+# TypeScript incremental build caches: machine-specific, never shared.
+*.tsbuildinfo
