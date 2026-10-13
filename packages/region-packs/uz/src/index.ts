@@ -29,7 +29,7 @@ export const uzRegionPack: RegionPack = {
     dateFormatLocale: 'uz-UZ',
     firstDayOfWeek: 1,
   },
-  currency: { default: 'UZS', symbolPosition: 'suffix' },
+  currency: { default: 'UZS', symbolPosition: 'suffix', common: ['USD', 'EUR', 'RUB', 'CNY'] },
   legalForms: LEGAL_FORMS,
   taxRegimes: TAX_REGIMES,
   chartOfAccountsTemplate: CHART_OF_ACCOUNTS,

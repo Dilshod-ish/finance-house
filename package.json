@@ -17,8 +17,8 @@
     "test:integration": "turbo run test:integration",
     "coverage": "turbo run coverage --concurrency=4",
     "db:migrate": "pnpm --filter @fincore/db db:migrate",
-    "db:seed": "pnpm --filter @fincore/db db:seed",
-    "db:reset": "pnpm --filter @fincore/db db:reset",
+    "db:seed": "pnpm --filter @fincore/seed db:seed",
+    "db:reset": "pnpm --filter @fincore/db db:reset && pnpm --filter @fincore/seed db:seed",
     "db:generate": "pnpm --filter @fincore/db db:generate",
     "infra:up": "docker compose -f docker/docker-compose.yml up -d",
     "infra:down": "docker compose -f docker/docker-compose.yml down"

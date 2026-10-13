@@ -1,4 +1,20 @@
-import type { FlowType, GlAccountType, Side } from '@fincore/shared';
+import type { AccountKind, FlowType, GlAccountType, Side } from '@fincore/shared';
+
+/**
+ * What the platform needs to *find* an account for, independent of a country's
+ * numbering. I5 resolves cash accounts through `cash`; the seed and later the
+ * reports resolve everything else the same way, so no code outside a pack ever
+ * names a chart-of-accounts code.
+ */
+export type GlAccountRole =
+  | 'cash'
+  | 'receivable'
+  | 'payable'
+  | 'payroll_payable'
+  | 'revenue'
+  | 'expense'
+  | 'fx_difference'
+  | 'retained_earnings';
 
 /**
  * One row of a chart-of-accounts template. Materialised per organization at
@@ -10,6 +26,10 @@ export interface GlAccountSeed {
   readonly nameKey: string;
   readonly type: GlAccountType;
   readonly normalSide: Side;
+  /** Null when nothing outside the pack needs to resolve this account. */
+  readonly role: GlAccountRole | null;
+  /** Set only on `role: 'cash'` accounts: which kind of money sits here. */
+  readonly accountKind: AccountKind | null;
 }
 
 /** One user-visible article, bound to a GL account and a P&L line. */

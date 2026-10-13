@@ -290,7 +290,7 @@ export function createLedger(db: Database): Ledger {
           kind: 'reversal',
           sourceType: original.sourceType,
           sourceId: original.sourceId,
-          description: `Reversal of ${entryId}`,
+          description: options.description ?? null,
           reversesId: entryId,
           reversalReason: reason,
           idempotencyKey: options.idempotencyKey ?? null,

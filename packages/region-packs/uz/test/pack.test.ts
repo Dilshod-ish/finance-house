@@ -3,6 +3,8 @@ import {
   LANGUAGES,
   articleTemplateFor,
   auditMessages,
+  cashGlAccountFor,
+  glAccountsByRole,
   declaredKeys,
   legalFormByCode,
   rateEffectiveOn,
@@ -23,6 +25,8 @@ describe('uz pack — shape', () => {
     expect(pack.currency.default).toBe('UZS');
     expect(pack.fxSource.id).toBe('fx.cbu');
     expect(pack.fxSource.quoteCurrency).toBe('UZS');
+    expect(pack.currency.common).toContain('USD');
+    expect(pack.currency.common).not.toContain(pack.currency.default);
   });
 
   it('ships the three legal forms, with YaTT marked as an individual', () => {
@@ -154,6 +158,38 @@ describe('uz pack — chart of accounts and articles', () => {
     for (const article of template.articles) {
       if (['financing', 'investing', 'transfer'].includes(article.flowType)) {
         expect([article.key, article.pnlLineCode]).toEqual([article.key, null]);
+      }
+    }
+  });
+});
+
+describe('uz pack — account roles', () => {
+  it('marks exactly one GL account per money kind (I5)', () => {
+    for (const kind of ['bank', 'cash', 'card', 'ewallet'] as const) {
+      const account = cashGlAccountFor(pack, kind);
+      expect([kind, account?.role]).toEqual([kind, 'cash']);
+    }
+    expect(cashGlAccountFor(pack, 'virtual')).toBeUndefined();
+  });
+
+  it('exposes the roles the platform resolves accounts by', () => {
+    for (const role of [
+      'receivable',
+      'payable',
+      'payroll_payable',
+      'revenue',
+      'expense',
+      'fx_difference',
+      'retained_earnings',
+    ] as const) {
+      expect([role, glAccountsByRole(pack, role).length > 0]).toEqual([role, true]);
+    }
+  });
+
+  it('only puts accountKind on cash accounts', () => {
+    for (const account of pack.chartOfAccountsTemplate) {
+      if (account.role !== 'cash') {
+        expect([account.code, account.accountKind]).toEqual([account.code, null]);
       }
     }
   });

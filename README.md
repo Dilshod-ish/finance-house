@@ -46,6 +46,7 @@ packages/
   ledger/                      posting engine — journal_* ga yozadigan yagona joy
   reports/ inventory/ importers/ ai/   chegara sifatida band, hozircha bo'sh
   region-packs/_contract, uz/  RegionPack interfeysi va O'zbekiston paketi
+  seed/                        deterministik demo ma'lumot + smoke testlar
 tooling/
   tsconfig/                    umumiy strict tsconfig
   eslint-config/               umumiy flat config

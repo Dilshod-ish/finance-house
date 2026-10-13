@@ -124,6 +124,13 @@ export interface TrialBalanceRow {
 
 export interface ReverseEntryOptions {
   /**
+   * Free text for the reversal entry. Defaults to null: the link to the
+   * original lives in `reverses_id` and the justification in
+   * `reversal_reason`, so there is no reason to bake a surrogate key into
+   * prose a user reads.
+   */
+  readonly description?: string | null;
+  /**
    * Where the reversal lands. Defaults to the original `accrual_date` so that
    * the trial balance as of any date returns to its prior state; pass an open
    * date when the original period has since been locked (I2).

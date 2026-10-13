@@ -47,7 +47,7 @@ db-generate: ## Generate a Drizzle migration from the schema
 db-migrate: ## Apply migrations to $$DATABASE_URL
 	pnpm db:migrate
 
-db-seed: ## Seed deterministic demo data
+db-seed: ## Seed deterministic demo data (~200 entries, two tenants)
 	pnpm db:seed
 
 db-reset: ## Drop, recreate, migrate and seed

@@ -232,6 +232,8 @@ describe('reverseEntry', () => {
     expect(reversal.value.kind).toBe('reversal');
     expect(reversal.value.reversesId).toBe(posted.value.id);
     expect(reversal.value.reversalReason).toBe('duplicate import');
+    // No surrogate key in prose: the link is reverses_id, the why is the reason.
+    expect(reversal.value.description).toBeNull();
     expect(reversal.value.accrualDate).toBe('2026-08-01');
 
     const rows = await h.asOrg(
@@ -302,11 +304,13 @@ describe('reverseEntry', () => {
     const allowed = await ledger.reverseEntry(acme.orgId, posted.value.id, 'late fix', null, {
       accrualDate: isoDate('2026-10-01'),
       idempotencyKey: `rev-${randomUUID()}`,
+      description: 'Posted to the wrong period',
     });
     expect(allowed.ok).toBe(true);
     if (allowed.ok) {
       expect(allowed.value.accrualDate).toBe('2026-10-01');
       expect(allowed.value.idempotencyKey).not.toBeNull();
+      expect(allowed.value.description).toBe('Posted to the wrong period');
     }
   });
 

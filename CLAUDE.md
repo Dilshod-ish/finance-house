@@ -73,7 +73,9 @@ packages/inventory     Stock valuation (moving average, FIFO) and period
                        recalculation. Pure functions over movement sequences.
 packages/importers     Bank statement parsers. Pure functions: bytes -> DTOs.
 packages/ai            Claude wrappers. Never computes a financial figure.
-packages/db            Drizzle schema, migrations, seeds, RLS policies.
+packages/db            Drizzle schema, migrations, RLS policies.
+packages/seed          Deterministic demo data. Writes through `ledger`, so it
+                       cannot live in `db` (that would cycle db -> ledger -> db).
 packages/shared        Money, dates, i18n, result types.
 ```
 

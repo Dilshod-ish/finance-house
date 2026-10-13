@@ -232,6 +232,55 @@ importers:
         specifier: 4.1.11
         version: 4.1.11(@types/node@22.20.0)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@22.20.0)(esbuild@0.28.2)(tsx@4.23.12)(yaml@2.9.0))
 
+  packages/seed:
+    dependencies:
+      '@fincore/db':
+        specifier: workspace:*
+        version: link:../db
+      '@fincore/ledger':
+        specifier: workspace:*
+        version: link:../ledger
+      '@fincore/region-pack-contract':
+        specifier: workspace:*
+        version: link:../region-packs/_contract
+      '@fincore/region-pack-uz':
+        specifier: workspace:*
+        version: link:../region-packs/uz
+      '@fincore/shared':
+        specifier: workspace:*
+        version: link:../shared
+      drizzle-orm:
+        specifier: 0.45.2
+        version: 0.45.2(postgres@3.4.9)
+      postgres:
+        specifier: 3.4.9
+        version: 3.4.9
+    devDependencies:
+      '@fincore/eslint-config':
+        specifier: workspace:*
+        version: link:../../tooling/eslint-config
+      '@fincore/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@testcontainers/postgresql':
+        specifier: 12.1.0
+        version: 12.1.0
+      eslint:
+        specifier: 10.9.1
+        version: 10.9.1
+      testcontainers:
+        specifier: 12.1.0
+        version: 12.1.0
+      tsx:
+        specifier: 4.23.12
+        version: 4.23.12
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 4.1.11
+        version: 4.1.11(@types/node@22.20.0)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@22.20.0)(esbuild@0.28.2)(tsx@4.23.12)(yaml@2.9.0))
+
   packages/shared:
     dependencies:
       decimal.js:
