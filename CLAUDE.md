@@ -29,7 +29,7 @@ These are enforced in the database, not just in application code. A PR that
 weakens any of them is rejected regardless of what it enables.
 
 - **I1** For every `journal_entry`: `SUM(debit.amount_functional) =
-  SUM(credit.amount_functional)`. Enforced by a deferred constraint trigger.
+SUM(credit.amount_functional)`. Enforced by a deferred constraint trigger.
 - **I2** No writes into a locked period (`period_lock`). Corrections are made by
   reversing entries, never by mutation.
 - **I3** Every `journal_line` carries `source_type` and (where applicable)
@@ -78,6 +78,7 @@ packages/shared        Money, dates, i18n, result types.
 ```
 
 Rules:
+
 - `ledger` and `reports` must not import from `apps/*`.
 - Only `ledger` writes to `journal_entry` / `journal_line`.
 - `reports` is read-only. If a report needs a write, the design is wrong.
@@ -89,6 +90,7 @@ Rules:
 ## 5. Money and currency
 
 Three layers, always:
+
 1. `amount` + `currency` — as transacted.
 2. `amount_functional` — the legal entity's functional currency, at the
    transaction-date rate. I1 is checked on this column.
@@ -119,6 +121,7 @@ Rounding happens at presentation only. Never round intermediate values.
 ## 7. Definition of done
 
 A change is done when all of these hold:
+
 1. Types check, lint passes, all tests pass.
 2. Migration written, reversible, and applied cleanly to a fresh DB **and** to a
    DB seeded with the previous schema.
@@ -163,6 +166,7 @@ A change is done when all of these hold:
 ## 10. Escalate instead of guessing
 
 Stop and ask when you hit any of these. Do not invent an answer:
+
 - An accounting-treatment question with more than one defensible answer
   (revenue recognition timing, cost allocation base, VAT treatment on a
   specific transaction type).

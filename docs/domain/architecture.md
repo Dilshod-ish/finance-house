@@ -46,14 +46,14 @@ Fintablo'da hisobotlar **modullardan yig'ma qilib tikiladi**: ДДС — operats
 
 **Bundan kelib chiqadigan majburiy invariantlar (buzilishi mumkin emas):**
 
-| # | Invariant | Nega |
-|---|-----------|------|
-| I1 | Har bir `journal_entry` uchun `Σ debit = Σ credit` (funksional valyutada) | Balans hech qachon «qiyshaymaydi» |
-| I2 | Yopilgan davrga (`period_lock`) yozuv kiritib bo'lmaydi; faqat storno + qayta yozuv | Audit va ishonch |
-| I3 | Har bir `journal_line` da `source_type` + `source_id` majburiy | Har bir raqamdan manba hujjatga drill-down |
-| I4 | `journal_entry` o'chirilmaydi — `reversed_by_id` orqali stornolanadi | Immutable audit trail |
-| I5 | Pul oqimi (DDS) faqat `account_kind IN (bank, cash, ewallet)` bo'lgan liniyalardan hisoblanadi | Kesh va nachisleniyani chalkashtirmaslik |
-| I6 | Nachisleniye sanasi (`accrual_date`) va pul sanasi (`cash_date`) — **alohida maydonlar** | ОПиУ va ДДС farqining butun mohiyati shunda |
+| #   | Invariant                                                                                      | Nega                                        |
+| --- | ---------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| I1  | Har bir `journal_entry` uchun `Σ debit = Σ credit` (funksional valyutada)                      | Balans hech qachon «qiyshaymaydi»           |
+| I2  | Yopilgan davrga (`period_lock`) yozuv kiritib bo'lmaydi; faqat storno + qayta yozuv            | Audit va ishonch                            |
+| I3  | Har bir `journal_line` da `source_type` + `source_id` majburiy                                 | Har bir raqamdan manba hujjatga drill-down  |
+| I4  | `journal_entry` o'chirilmaydi — `reversed_by_id` orqali stornolanadi                           | Immutable audit trail                       |
+| I5  | Pul oqimi (DDS) faqat `account_kind IN (bank, cash, ewallet)` bo'lgan liniyalardan hisoblanadi | Kesh va nachisleniyani chalkashtirmaslik    |
+| I6  | Nachisleniye sanasi (`accrual_date`) va pul sanasi (`cash_date`) — **alohida maydonlar**       | ОПиУ va ДДС farqining butun mohiyati shunda |
 
 ### 1.3 Nima yutamiz
 
@@ -75,21 +75,21 @@ Organization (tenant, = biznes/holding)
 ```
 
 - **Konsolidatsiya:** hisobotlar `organization` darajasida sukut bo'yicha yig'iladi; `legal_entity_id[]` filtri bilan kesiladi.
-- **Ichki oborot (intercompany) eliminatsiyasi:** yuridik shaxslar o'rtasidagi o'tkazmalar konsolidatsiyada avtomatik chiqarib tashlanadi. *Bu Fintablo'da zaif ishlangan joy.*
+- **Ichki oborot (intercompany) eliminatsiyasi:** yuridik shaxslar o'rtasidagi o'tkazmalar konsolidatsiyada avtomatik chiqarib tashlanadi. _Bu Fintablo'da zaif ishlangan joy._
 - **Virtual hisob** — reklama kabineti, marketplace balansi, deponent: pul o'tdi lekin xarajat hali sodir bo'lmadi.
 
 ### 2.2 O'lchamlar (dimensions)
 
 Har bir `journal_line` quyidagi o'lchamlarni oladi (barchasi ixtiyoriy, lekin `direction` amalda majburiy):
 
-| O'lcham | Misol | Izoh |
-|---------|-------|------|
-| `direction_id` | «Ulgurji», «Chakana», «Onlayn» | Biznes yo'nalishi. Iyerarxik. |
-| `project_id` / `deal_id` | «Yunusobod obyekti» | Qurilish/agentlik uchun kritik |
-| `counterparty_id` | Mijoz/yetkazib beruvchi | Debitorka/kreditorka manbayi |
-| `cost_center_id` | «Sotuv bo'limi» | Ixtiyoriy, o'rta biznesdan boshlab |
-| `employee_id` | | Oylik va ishbay ish uchun |
-| `tag[]` | «aksiya-2026», «tender» | Erkin |
+| O'lcham                  | Misol                          | Izoh                               |
+| ------------------------ | ------------------------------ | ---------------------------------- |
+| `direction_id`           | «Ulgurji», «Chakana», «Onlayn» | Biznes yo'nalishi. Iyerarxik.      |
+| `project_id` / `deal_id` | «Yunusobod obyekti»            | Qurilish/agentlik uchun kritik     |
+| `counterparty_id`        | Mijoz/yetkazib beruvchi        | Debitorka/kreditorka manbayi       |
+| `cost_center_id`         | «Sotuv bo'limi»                | Ixtiyoriy, o'rta biznesdan boshlab |
+| `employee_id`            |                                | Oylik va ishbay ish uchun          |
+| `tag[]`                  | «aksiya-2026», «tender»        | Erkin                              |
 
 **Bilvosita xarajatlarni taqsimlash (allocation):** yo'nalishi yo'q xarajatlar oy yopilishida tanlangan baza bo'yicha (tushum ulushi / xodimlar soni / to'g'ridan-to'g'ri xarajat ulushi / qo'lda koeffitsient) taqsimlanadi va **alohida `allocation` tipidagi journal entry** yaratadi. Ya'ni taqsimlash ham daftarda ko'rinadi va bekor qilinishi mumkin.
 
@@ -218,20 +218,20 @@ create index on journal_line (org_id, account_id) where account_id is not null;
 
 ### 2.5 Operatsion jadvallar (daftarga «yem» beradi)
 
-| Jadval | Vazifa | Journal generatsiyasi |
-|--------|--------|----------------------|
-| `cash_operation` | Bank/kassa harakati (import yoki qo'lda) | `kind=cash`, pul hisobi ↔ modda |
-| `obligation` | Nachisleniye: akt, hisob-faktura, shartnoma bosqichi | `kind=accrual`, xarajat/daromad ↔ debitorka/kreditorka |
-| `obligation_settlement` | Majburiyat ↔ to'lov bog'lanishi (many-to-many, qisman to'lov) | yopish yozuvi |
-| `deal` / `deal_item` / `deal_purchase` / `deal_stage` | Bitim, uning tushumi va to'g'ridan-to'g'ri xarajatlari | tushum + tannarx accrual'lari |
-| `employee` / `payroll_run` / `payroll_line` | Oylik, ishbay, soliqlar | `kind=payroll` |
-| `asset` / `depreciation_schedule` | Asosiy vositalar | `kind=depreciation`, oylik avtomatik |
-| `loan` / `loan_schedule` | Kredit, lizing | asosiy qarz = financing, foiz = xarajat |
-| `tax_accrual` | Soliq nachisleniyasi | `kind=tax` |
-| `manual_pnl_entry` | Tashqi tizimdan (1C, iiko, marketplace) qo'lda kiritish | `kind=accrual`, dublikat himoyasi bilan |
-| `budget` / `budget_line` | BDDS va BDR rejalari | daftarga tushmaydi, plan/fakt uchun alohida |
-| `payment_request` | To'lovga ariza + tasdiqlash marshruti | tasdiqlangach `cash_operation` reja yozuvi |
-| `scenario` / `scenario_driver` | **Yangi:** moliyaviy model, «what-if» | daftarga tushmaydi |
+| Jadval                                                | Vazifa                                                        | Journal generatsiyasi                                  |
+| ----------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------ |
+| `cash_operation`                                      | Bank/kassa harakati (import yoki qo'lda)                      | `kind=cash`, pul hisobi ↔ modda                        |
+| `obligation`                                          | Nachisleniye: akt, hisob-faktura, shartnoma bosqichi          | `kind=accrual`, xarajat/daromad ↔ debitorka/kreditorka |
+| `obligation_settlement`                               | Majburiyat ↔ to'lov bog'lanishi (many-to-many, qisman to'lov) | yopish yozuvi                                          |
+| `deal` / `deal_item` / `deal_purchase` / `deal_stage` | Bitim, uning tushumi va to'g'ridan-to'g'ri xarajatlari        | tushum + tannarx accrual'lari                          |
+| `employee` / `payroll_run` / `payroll_line`           | Oylik, ishbay, soliqlar                                       | `kind=payroll`                                         |
+| `asset` / `depreciation_schedule`                     | Asosiy vositalar                                              | `kind=depreciation`, oylik avtomatik                   |
+| `loan` / `loan_schedule`                              | Kredit, lizing                                                | asosiy qarz = financing, foiz = xarajat                |
+| `tax_accrual`                                         | Soliq nachisleniyasi                                          | `kind=tax`                                             |
+| `manual_pnl_entry`                                    | Tashqi tizimdan (1C, iiko, marketplace) qo'lda kiritish       | `kind=accrual`, dublikat himoyasi bilan                |
+| `budget` / `budget_line`                              | BDDS va BDR rejalari                                          | daftarga tushmaydi, plan/fakt uchun alohida            |
+| `payment_request`                                     | To'lovga ariza + tasdiqlash marshruti                         | tasdiqlangach `cash_operation` reja yozuvi             |
+| `scenario` / `scenario_driver`                        | **Yangi:** moliyaviy model, «what-if»                         | daftarga tushmaydi                                     |
 
 ### 2.6 «Manba belgisi» — Fintablo'ning eng yaxshi g'oyasini kuchaytiramiz
 
@@ -266,7 +266,7 @@ O'zbekiston uchun bu **MVP talabi**, opsiya emas: MSB so'm + dollar (ko'pincha y
 
 **Kurs manbayi:** CBU (`cbu.uz` ochiq API) kunlik + qo'lda override. `fx_rate` jadvali: `(date, from, to, rate, source)`.
 
-**Kurs farqi:** oy yopilishida valyutadagi hisoblar va debitorka/kreditorka qayta baholanadi → `kind=fx_revaluation` yozuvi → ОПиУ da «Kurs farqi» satri (EBITDA dan pastda). *Fintablo bu narsani deyarli qilmaydi — bu bizning aniq ustunligimiz.*
+**Kurs farqi:** oy yopilishida valyutadagi hisoblar va debitorka/kreditorka qayta baholanadi → `kind=fx_revaluation` yozuvi → ОПиУ da «Kurs farqi» satri (EBITDA dan pastda). _Fintablo bu narsani deyarli qilmaydi — bu bizning aniq ustunligimiz._
 
 ---
 
@@ -279,15 +279,15 @@ interface RegionPack {
   code: 'uz' | 'ru' | 'kz' | 'global';
   locale: { languages: string[]; numberFormat; dateFormat; firstDayOfWeek };
   currency: { default: string; symbolPosition };
-  legalForms: LegalForm[];              // MCHJ, YaTT, XK...
-  taxRegimes: TaxRegime[];              // pastga qarang
+  legalForms: LegalForm[]; // MCHJ, YaTT, XK...
+  taxRegimes: TaxRegime[]; // pastga qarang
   chartOfAccountsTemplate: GlAccountSeed[];
-  articleTemplates: ArticleSeed[];       // sohalar bo'yicha
-  bankConnectors: BankConnector[];       // API yoki parser
-  statementParsers: StatementParser[];   // 1C-exchange txt, xlsx, pdf, mt940, camt.053
-  eInvoiceProvider?: EInvoiceProvider;   // Didox / Faktura.uz
-  taxAuthorityConnector?: TaxConnector;  // soliq.uz
-  fxSource: FxSource;                    // cbu.uz / cbr.ru / ECB
+  articleTemplates: ArticleSeed[]; // sohalar bo'yicha
+  bankConnectors: BankConnector[]; // API yoki parser
+  statementParsers: StatementParser[]; // 1C-exchange txt, xlsx, pdf, mt940, camt.053
+  eInvoiceProvider?: EInvoiceProvider; // Didox / Faktura.uz
+  taxAuthorityConnector?: TaxConnector; // soliq.uz
+  fxSource: FxSource; // cbu.uz / cbr.ru / ECB
   reportPresets: ReportPreset[];
 }
 ```
@@ -296,12 +296,12 @@ interface RegionPack {
 
 **Soliq rejimlari** (`legal_entity.tax_regime`), 2026-yil stavkalari:
 
-| Rejim | Kim uchun | Stavkalar |
-|-------|-----------|-----------|
+| Rejim       | Kim uchun                                             | Stavkalar                                      |
+| ----------- | ----------------------------------------------------- | ---------------------------------------------- |
 | `aylanma_1` | YaTT / o'zini o'zi band qilgan, aylanma ≤ 1 mlrd so'm | aylanmadan **1%** + ijtimoiy soliq oyiga 1 BHM |
-| `aylanma_4` | Yuridik shaxs, aylanma ≤ 1 mlrd so'm | aylanmadan **4%** |
-| `qqs_foyda` | Aylanma > 1 mlrd so'm yoki ixtiyoriy | QQS **12%**, foyda solig'i **15%** |
-| `it_park` | IT Park rezidenti | imtiyozli rejim (konfiguratsiyalanadi) |
+| `aylanma_4` | Yuridik shaxs, aylanma ≤ 1 mlrd so'm                  | aylanmadan **4%**                              |
+| `qqs_foyda` | Aylanma > 1 mlrd so'm yoki ixtiyoriy                  | QQS **12%**, foyda solig'i **15%**             |
+| `it_park`   | IT Park rezidenti                                     | imtiyozli rejim (konfiguratsiyalanadi)         |
 
 Umumiy: JSHDS **12%**, ijtimoiy soliq **12%** (byudjet tashkilotlari 25%), yuridik shaxs mol-mulk solig'i **1,5%**.
 
@@ -313,16 +313,16 @@ Umumiy: JSHDS **12%**, ijtimoiy soliq **12%** (byudjet tashkilotlari 25%), yurid
 
 **Integratsiyalar (`uz`) — prioritet bo'yicha:**
 
-| Prioritet | Integratsiya | Usul | Izoh |
-|---|---|---|---|
-| P0 | Bank ko'chirmasi importi | Fayl parser: 1C-exchange `.txt`, `.xlsx`, `.csv`, PDF+OCR | O'zbekistonda ochiq banking deyarli yo'q → **parser-first strategiya** |
-| P0 | Telegram bot | Naqd operatsiya, chek foto, kunlik dayjest | UZ da Telegram = asosiy kanal |
-| P1 | Didox / Faktura.uz (EHF) | API | Kiruvchi hisob-fakturalar → avtomatik majburiyat |
-| P1 | Payme / Click / Uzum ekvayring | API | Kunlik reestr + komissiya ajratish |
-| P2 | 1C:Buxgalteriya UZ | Fayl almashinuv + API | O'z-o'zi sozlanadigan bo'lishi shart (Fintablo'da yo'q) |
-| P2 | Bank API'lari (TBC, Anor, Kapitalbank, Uzum Business) | REST/OAuth | Mavjud bo'lganda |
-| P3 | soliq.uz shaxsiy kabinet | API/parsing | Soliq nachisleniyalarini tortib olish |
-| P3 | Ombor: MySklad, Billz, 1C UT | API | Tannarx uchun |
+| Prioritet | Integratsiya                                          | Usul                                                      | Izoh                                                                   |
+| --------- | ----------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------- |
+| P0        | Bank ko'chirmasi importi                              | Fayl parser: 1C-exchange `.txt`, `.xlsx`, `.csv`, PDF+OCR | O'zbekistonda ochiq banking deyarli yo'q → **parser-first strategiya** |
+| P0        | Telegram bot                                          | Naqd operatsiya, chek foto, kunlik dayjest                | UZ da Telegram = asosiy kanal                                          |
+| P1        | Didox / Faktura.uz (EHF)                              | API                                                       | Kiruvchi hisob-fakturalar → avtomatik majburiyat                       |
+| P1        | Payme / Click / Uzum ekvayring                        | API                                                       | Kunlik reestr + komissiya ajratish                                     |
+| P2        | 1C:Buxgalteriya UZ                                    | Fayl almashinuv + API                                     | O'z-o'zi sozlanadigan bo'lishi shart (Fintablo'da yo'q)                |
+| P2        | Bank API'lari (TBC, Anor, Kapitalbank, Uzum Business) | REST/OAuth                                                | Mavjud bo'lganda                                                       |
+| P3        | soliq.uz shaxsiy kabinet                              | API/parsing                                               | Soliq nachisleniyalarini tortib olish                                  |
+| P3        | Ombor: MySklad, Billz, 1C UT                          | API                                                       | Tannarx uchun                                                          |
 
 **Ma'lumotlar joylashuvi:** O'zbekiston shaxsiy ma'lumotlar to'g'risidagi qonuni fuqarolar ma'lumotlarini **mamlakat hududida saqlashni talab qiladi.** Arxitektura `data_residency` ni region darajasida qo'llab-quvvatlashi kerak (UZ uchun mahalliy DC/bulut, global uchun EU/US). Buni keyin qo'shib bo'lmaydi — birinchi kundan region bo'yicha ajratilgan deployment.
 
@@ -332,20 +332,20 @@ Umumiy: JSHDS **12%**, ijtimoiy soliq **12%** (byudjet tashkilotlari 25%), yurid
 
 ### 5.1 Tanlov va sabab
 
-| Qatlam | Tanlov | Nega |
-|--------|--------|------|
-| Monorepo | **Turborepo + pnpm** | Bitta til, tez CI, umumiy tiplar |
-| Backend | **TypeScript + NestJS** (yoki Hono, agar yengilroq kerak bo'lsa) | Domen boy, DI va modullilik kerak |
-| DB | **PostgreSQL 16** + Row Level Security | Moliyaviy ma'lumot = tranzaksion + `numeric` aniqligi |
-| ORM/migratsiya | **Drizzle ORM** + `drizzle-kit` | SQL ga yaqin, generated tiplar, moliyaviy so'rovlarni yashirmaydi |
-| Navbat | **BullMQ + Redis** | Import, hisobot qayta hisoblash, integratsiya sinxronizatsiyasi |
-| Frontend | **Next.js 15 (App Router) + React 19 + TypeScript** | SSR hisobotlar, tez TTI |
-| UI | **Tailwind + shadcn/ui + TanStack Table + Recharts** | Katta jadvallar — TanStack Table majburiy |
-| Auth | **better-auth** yoki Keycloak | MFA, SSO (Enterprise uchun) |
-| Fayl | S3-mos (MinIO on-prem UZ uchun) | Chek, ko'chirma, EHF |
-| AI | **Anthropic Claude API** | OCR, kategoriyalash, tahlil, NL so'rov |
-| Kuzatuv | OpenTelemetry + Grafana + Sentry | |
-| Deploy | Docker + Kubernetes (yoki Hetzner + Coolify MVP uchun) | Region bo'yicha ajratish |
+| Qatlam         | Tanlov                                                           | Nega                                                              |
+| -------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Monorepo       | **Turborepo + pnpm**                                             | Bitta til, tez CI, umumiy tiplar                                  |
+| Backend        | **TypeScript + NestJS** (yoki Hono, agar yengilroq kerak bo'lsa) | Domen boy, DI va modullilik kerak                                 |
+| DB             | **PostgreSQL 16** + Row Level Security                           | Moliyaviy ma'lumot = tranzaksion + `numeric` aniqligi             |
+| ORM/migratsiya | **Drizzle ORM** + `drizzle-kit`                                  | SQL ga yaqin, generated tiplar, moliyaviy so'rovlarni yashirmaydi |
+| Navbat         | **BullMQ + Redis**                                               | Import, hisobot qayta hisoblash, integratsiya sinxronizatsiyasi   |
+| Frontend       | **Next.js 15 (App Router) + React 19 + TypeScript**              | SSR hisobotlar, tez TTI                                           |
+| UI             | **Tailwind + shadcn/ui + TanStack Table + Recharts**             | Katta jadvallar — TanStack Table majburiy                         |
+| Auth           | **better-auth** yoki Keycloak                                    | MFA, SSO (Enterprise uchun)                                       |
+| Fayl           | S3-mos (MinIO on-prem UZ uchun)                                  | Chek, ko'chirma, EHF                                              |
+| AI             | **Anthropic Claude API**                                         | OCR, kategoriyalash, tahlil, NL so'rov                            |
+| Kuzatuv        | OpenTelemetry + Grafana + Sentry                                 |                                                                   |
+| Deploy         | Docker + Kubernetes (yoki Hetzner + Coolify MVP uchun)           | Region bo'yicha ajratish                                          |
 
 **Muhim:** pul summalari uchun **hech qachon `float`/`number` ishlatilmaydi.** DB da `numeric(20,4)`, TS da `decimal.js` yoki `bigint` (minor units). Bu lint qoidasi bilan majburlanadi.
 
@@ -400,14 +400,14 @@ fincore/
 
 Fintablo'da AI — «tavsiyalar generatori». Bizda AI **ish jarayoniga kirib boradi**:
 
-| Funksiya | Tavsif | Xavfsizlik chegarasi |
-|----------|--------|---------------------|
-| Chek/hisob-faktura OCR | Foto → operatsiya loyihasi (summa, kontragent, modda) | Har doim **tasdiqlash talab qiladi**, avtomatik post qilmaydi |
-| Avtokategoriyalash | Ko'chirma qatori → modda + yo'nalish taxmini, ishonch darajasi bilan | <85% ishonchda navbatga tushadi |
-| Anomaliya detektori | «Ijara odatdagidan 3× yuqori», «dublikat to'lov shubhasi» | Faqat ogohlantirish |
-| Tabiiy tilda so'rov | «Q3 da qaysi yo'nalish zarar keltirdi?» | **Text-to-SQL emas** — oldindan tayyorlangan parametrli so'rovlar to'plami. Erkin SQL generatsiyasi = xavf |
-| Oy yopish yordamchisi | Yopilmagan majburiyatlar, taqsimlanmagan operatsiyalar ro'yxati | Deterministik qoidalar + AI izohi |
-| Narrativ hisobot | Egaga oylik xat: nima o'zgardi va nega | Raqamlar deterministik, faqat matn AI |
+| Funksiya               | Tavsif                                                               | Xavfsizlik chegarasi                                                                                       |
+| ---------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Chek/hisob-faktura OCR | Foto → operatsiya loyihasi (summa, kontragent, modda)                | Har doim **tasdiqlash talab qiladi**, avtomatik post qilmaydi                                              |
+| Avtokategoriyalash     | Ko'chirma qatori → modda + yo'nalish taxmini, ishonch darajasi bilan | <85% ishonchda navbatga tushadi                                                                            |
+| Anomaliya detektori    | «Ijara odatdagidan 3× yuqori», «dublikat to'lov shubhasi»            | Faqat ogohlantirish                                                                                        |
+| Tabiiy tilda so'rov    | «Q3 da qaysi yo'nalish zarar keltirdi?»                              | **Text-to-SQL emas** — oldindan tayyorlangan parametrli so'rovlar to'plami. Erkin SQL generatsiyasi = xavf |
+| Oy yopish yordamchisi  | Yopilmagan majburiyatlar, taqsimlanmagan operatsiyalar ro'yxati      | Deterministik qoidalar + AI izohi                                                                          |
+| Narrativ hisobot       | Egaga oylik xat: nima o'zgardi va nega                               | Raqamlar deterministik, faqat matn AI                                                                      |
 
 **Qattiq qoida:** AI hech qachon raqam hisoblamaydi. Barcha raqamlar daftardan keladi, AI faqat **tanlaydi, tushuntiradi va taklif qiladi**. Aks holda mahsulotga ishonch nolga tushadi.
 
@@ -415,21 +415,21 @@ Fintablo'da AI — «tavsiyalar generatori». Bizda AI **ish jarayoniga kirib bo
 
 ## 8. Fintablo bilan taqqoslash: nima o'zgardi
 
-| Jihat | Fintablo | FinCore |
-|-------|----------|---------|
-| Hisobot yadrosi | Modullardan yig'ma | Yagona ikki yozuvli daftar |
-| Balans | Start oyida sun'iy tenglashtirish | Har doim avtomatik teng |
-| Hisobotlararo sverka | Yo'q | Avtomatik «Tekshiruv» ekrani |
-| Ko'p valyuta | Zaif | Uch qatlamli, kurs farqi avtomatik |
-| Moliyaviy model / stsenariy | **Yo'q** (foydalanuvchi shikoyati) | Bor: drayverli model, 3 stsenariy |
-| Unit-ekonomika, ABC | **Yo'q** | Bor |
-| Takrorlanuvchi bitim/operatsiya | **Yo'q** (qo'lda qayta kiritish) | Shablon + oy nusxalash |
-| 1C integratsiyasi | O'zi sozlay olmaydi | Self-service mapper |
-| Oy yopish (close) jarayoni | Yo'q | Checklist + davr qulfi |
-| Audit trail | Cheklangan | To'liq immutable |
-| Mintaqa | Faqat RF | `region_pack` — UZ → global |
-| ОПиУ/kalendar narxi | O'rta tarifdan | Bazaviy tarifda (differensiatsiya) |
-| Onboarding | Og'ir, konsultant sotiladi | 20 daqiqada birinchi hisobot |
+| Jihat                           | Fintablo                           | FinCore                            |
+| ------------------------------- | ---------------------------------- | ---------------------------------- |
+| Hisobot yadrosi                 | Modullardan yig'ma                 | Yagona ikki yozuvli daftar         |
+| Balans                          | Start oyida sun'iy tenglashtirish  | Har doim avtomatik teng            |
+| Hisobotlararo sverka            | Yo'q                               | Avtomatik «Tekshiruv» ekrani       |
+| Ko'p valyuta                    | Zaif                               | Uch qatlamli, kurs farqi avtomatik |
+| Moliyaviy model / stsenariy     | **Yo'q** (foydalanuvchi shikoyati) | Bor: drayverli model, 3 stsenariy  |
+| Unit-ekonomika, ABC             | **Yo'q**                           | Bor                                |
+| Takrorlanuvchi bitim/operatsiya | **Yo'q** (qo'lda qayta kiritish)   | Shablon + oy nusxalash             |
+| 1C integratsiyasi               | O'zi sozlay olmaydi                | Self-service mapper                |
+| Oy yopish (close) jarayoni      | Yo'q                               | Checklist + davr qulfi             |
+| Audit trail                     | Cheklangan                         | To'liq immutable                   |
+| Mintaqa                         | Faqat RF                           | `region_pack` — UZ → global        |
+| ОПиУ/kalendar narxi             | O'rta tarifdan                     | Bazaviy tarifda (differensiatsiya) |
+| Onboarding                      | Og'ir, konsultant sotiladi         | 20 daqiqada birinchi hisobot       |
 
 ---
 
@@ -439,7 +439,6 @@ Fintablo'da AI — «tavsiyalar generatori». Bizda AI **ish jarayoniga kirib bo
 2. **Ombor.** Tannarx uchun ombor kerak. O'zimiz quramizmi (scope o'sadi) yoki faqat integratsiya (Billz, MySklad, 1C UT)? **Tavsiya: faza 1 da faqat integratsiya + soddalashtirilgan «o'rtacha tannarx» rejimi.**
 3. **On-prem talabi.** Yirik UZ mijozlari on-prem so'rashi mumkin. Docker Compose bilan yetkazib berish imkoniyati arxitekturada saqlanadi.
 4. **Til.** UI: o'zbek (lotin) + rus + ingliz. Rus tili UZ biznesida hali ham asosiy — **rus tilini birinchi klass qilib qo'ying**, faqat o'zbek bilan cheklanmang.
-
 
 ---
 

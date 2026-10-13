@@ -5,16 +5,16 @@ o'qiladi. Uni bu papkadagi fayllar bilan aralashtirmang.
 
 ## Tartib
 
-| Sessiya | Fayl | Natija |
-|---|---|---|
-| 1 | `01-bootstrap.md` | Repo skeleti, sxema, ledger yadrosi, region-pack, seed |
-| 2 | `02-slices.md` → C1 | Bank ko'chirmasi importi (uchidan uchiga) |
-| 3 | `02-slices.md` → C2 | Operatsiyalar navbati (UI) |
-| 4 | `02-slices.md` → C3 | To'lov kalendari |
-| 5 | `02-slices.md` → C4 | ОПиУ |
-| 6 | `02-slices.md` → C6 | Ombor va tannarx |
-| 7 | `02-slices.md` → C5 | AI qatlami |
-| har 2–3 hafta | `03-audits.md` | D1, D2, D3 auditlari |
+| Sessiya       | Fayl                | Natija                                                 |
+| ------------- | ------------------- | ------------------------------------------------------ |
+| 1             | `01-bootstrap.md`   | Repo skeleti, sxema, ledger yadrosi, region-pack, seed |
+| 2             | `02-slices.md` → C1 | Bank ko'chirmasi importi (uchidan uchiga)              |
+| 3             | `02-slices.md` → C2 | Operatsiyalar navbati (UI)                             |
+| 4             | `02-slices.md` → C3 | To'lov kalendari                                       |
+| 5             | `02-slices.md` → C4 | ОПиУ                                                   |
+| 6             | `02-slices.md` → C6 | Ombor va tannarx                                       |
+| 7             | `02-slices.md` → C5 | AI qatlami                                             |
+| har 2–3 hafta | `03-audits.md`      | D1, D2, D3 auditlari                                   |
 
 ## Qoidalar
 

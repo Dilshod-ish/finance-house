@@ -1,0 +1,12 @@
+{
+  "extends": "@fincore/tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts", "*.config.ts", "*.config.mjs"]
+}

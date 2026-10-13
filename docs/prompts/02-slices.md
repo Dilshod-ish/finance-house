@@ -4,7 +4,7 @@ Har biri alohida sessiya. Tartib: C1 → C2 → C3 → C4 → C6 → C5.
 
 ### C1 — Bank ko'chirmasi importi
 
-````
+```
 Implement the statement-import vertical slice end to end: file in, journal
 entries out, visible in a cash-flow query. Nothing else.
 
@@ -42,11 +42,11 @@ Definition of done is CLAUDE.md §7 plus: importing the fixture set twice in a
 row produces zero duplicate journal entries. Write that test.
 
 Plan first. Show me the plan before you write code.
-````
+```
 
 ### C2 — Operatsiya navbati (UI)
 
-````
+```
 Build the classification queue UI in apps/web. This is the screen an operator
 uses for 30 minutes a day, so it is a keyboard-first tool, not a CRUD form.
 
@@ -67,11 +67,11 @@ Requirements:
 
 Follow the design system in packages/ui. All strings via i18n keys in uz/ru/en.
 Playwright test covering the full keyboard path.
-````
+```
 
 ### C3 — To'lov kalendari
 
-````
+```
 Implement the payment calendar: the daily projected cash position.
 
 Sources of future flows:
@@ -97,11 +97,11 @@ Deliver:
 
 Performance target: 90-day projection for an org with 200k journal lines in
 under 400ms server-side. Show me the benchmark.
-````
+```
 
 ### C4 — ОПиУ (P&L)
 
-````
+```
 Implement the P&L report over the ledger.
 
 Structure is fixed (architecture.md §7.2 in the PRD): Revenue, COGS, Gross
@@ -125,11 +125,11 @@ Requirements:
 
 Do not add a "rounding adjustment" line. If the numbers do not tie, the bug is
 upstream and I want to know about it.
-````
+```
 
 ### C5 — AI qatlami
 
-````
+```
 Implement packages/ai. Read CLAUDE.md §9 first — the constraint that the AI
 never produces a financial figure is absolute and shapes the whole design.
 
@@ -159,7 +159,7 @@ Cross-cutting:
 - Evaluation harness: a labelled set of at least 200 real classified operations,
   reporting precision/recall per article. Wire it into CI as a non-blocking
   report so we can see regressions.
-````
+```
 
 ---
 

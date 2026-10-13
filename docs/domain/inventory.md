@@ -19,11 +19,11 @@ Bundan kelib chiqadi: **ОПиУ dagi «Tannarx» satri endi qo'lda kiritilmaydi
 
 ## 2. Baholash usuli
 
-| Usul | Holati | Izoh |
-|---|---|---|
-| **O'rtacha siljuvchi (moving weighted average)** | Sukut bo'yicha | MSB uchun eng tushunarli, hisoblash arzon |
-| **FIFO (partiyalar bo'yicha)** | Opsiya | Muddatli tovar, import, valyuta tebranishi katta bo'lganda |
-| LIFO | **Qo'llab-quvvatlanmaydi** | IAS 2 bo'yicha taqiqlangan, UZ da ham qo'llanilmaydi |
+| Usul                                             | Holati                     | Izoh                                                       |
+| ------------------------------------------------ | -------------------------- | ---------------------------------------------------------- |
+| **O'rtacha siljuvchi (moving weighted average)** | Sukut bo'yicha             | MSB uchun eng tushunarli, hisoblash arzon                  |
+| **FIFO (partiyalar bo'yicha)**                   | Opsiya                     | Muddatli tovar, import, valyuta tebranishi katta bo'lganda |
+| LIFO                                             | **Qo'llab-quvvatlanmaydi** | IAS 2 bo'yicha taqiqlangan, UZ da ham qo'llanilmaydi       |
 
 Usul **ombor darajasida** emas, **yuridik shaxs darajasida** tanlanadi va o'zgartirilganda faqat kelgusi davrga ta'sir qiladi (retroaktiv qayta hisoblash yo'q — bu buxgalteriya tamoyili).
 

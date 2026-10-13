@@ -14,13 +14,13 @@
 
 **Rang (semantik):**
 
-| Rol | Ishlatilishi |
-|---|---|
-| `text-primary` / `secondary` / `muted` | Matn iyerarxiyasi. Uch daraja, ko'p emas |
-| `danger` | Manfiy qoldiq, kassa uzilishi, kamomad, muddati o'tgan qarz |
-| `warning` | Chegaraga yaqinlashish, kechikish, tasdiq kutilmoqda |
-| `success` | Reja bajarildi, davr yopildi, sverka o'tdi |
-| `accent` | Havola, tanlangan holat, birlamchi harakat |
+| Rol                                    | Ishlatilishi                                                |
+| -------------------------------------- | ----------------------------------------------------------- |
+| `text-primary` / `secondary` / `muted` | Matn iyerarxiyasi. Uch daraja, ko'p emas                    |
+| `danger`                               | Manfiy qoldiq, kassa uzilishi, kamomad, muddati o'tgan qarz |
+| `warning`                              | Chegaraga yaqinlashish, kechikish, tasdiq kutilmoqda        |
+| `success`                              | Reja bajarildi, davr yopildi, sverka o'tdi                  |
+| `accent`                               | Havola, tanlangan holat, birlamchi harakat                  |
 
 Kategorial ranglar (yo'nalishlar, moddalar diagrammalarida) alohida palitradan olinadi va semantik ranglar bilan aralashtirilmaydi.
 
@@ -54,33 +54,33 @@ Jadval — bu mahsulotning asosiy komponenti, shuning uchun alohida qoidalar:
 
 Dizayn qilinishi kerak bo'lgan to'liq inventar. Ikkitasini yuqorida ko'rsatdim, qolganini bosqichma-bosqich beraman.
 
-| # | Ekran | Faza | Murakkablik |
-|---|---|---|---|
-| 1 | Bosh ekran (egasi) | F1 | ✅ tayyor |
-| 2 | Bitim kartochkasi | F2 | ✅ tayyor |
-| 3 | Onboarding sehrgari (5 qadam) | F1 | Yuqori — mahsulot taqdiri shunga bog'liq |
-| 4 | Operatsiyalar navbati (klaviatura rejimi) | F1 | Yuqori |
-| 5 | Hisoblar va qoldiqlar | F1 | Past |
-| 6 | Import: fayl → mapping → oldindan ko'rish | F1 | O'rta |
-| 7 | ДДС hisoboti (jadval + drill-down paneli) | F1 | Yuqori |
-| 8 | To'lov kalendari (kunlik lenta) | F1 | Yuqori |
-| 9 | ОПиУ (manba belgilari bilan) | F2 | Yuqori |
-| 10 | Balans | F2 | O'rta |
-| 11 | Tekshiruv ekrani (svetofor) | F2 | O'rta |
-| 12 | Oy yopish checklist'i | F2 | O'rta |
-| 13 | Debitorka/kreditorka reyestri (aging) | F2 | O'rta |
-| 14 | Oylik vedomosti | F2 | O'rta |
-| 15 | Ombor: qoldiqlar va harakat | F3 | O'rta |
-| 16 | Ombor: kirim hujjati (EHF dan) | F3 | O'rta |
-| 17 | Inventarizatsiya varaqasi | F3 | Past |
-| 18 | Byudjet (plan/fakt setkasi) | F3 | Yuqori |
-| 19 | Moliyaviy model (drayverlar + 3 stsenariy) | F3 | Yuqori |
-| 20 | Unit-ekonomika va ABC | F3 | O'rta |
-| 21 | To'lov arizalari va tasdiqlash | F3 | O'rta |
-| 22 | Sozlamalar: moddalar, yo'nalishlar, qoidalar | F1–F2 | O'rta |
-| 23 | Foydalanuvchilar va ruxsatlar | F2 | Past |
-| 24 | Mobil: egasi ko'rinishi | F4 | O'rta |
-| 25 | Telegram bot dialoglari | F1 | Past |
+| #   | Ekran                                        | Faza  | Murakkablik                              |
+| --- | -------------------------------------------- | ----- | ---------------------------------------- |
+| 1   | Bosh ekran (egasi)                           | F1    | ✅ tayyor                                |
+| 2   | Bitim kartochkasi                            | F2    | ✅ tayyor                                |
+| 3   | Onboarding sehrgari (5 qadam)                | F1    | Yuqori — mahsulot taqdiri shunga bog'liq |
+| 4   | Operatsiyalar navbati (klaviatura rejimi)    | F1    | Yuqori                                   |
+| 5   | Hisoblar va qoldiqlar                        | F1    | Past                                     |
+| 6   | Import: fayl → mapping → oldindan ko'rish    | F1    | O'rta                                    |
+| 7   | ДДС hisoboti (jadval + drill-down paneli)    | F1    | Yuqori                                   |
+| 8   | To'lov kalendari (kunlik lenta)              | F1    | Yuqori                                   |
+| 9   | ОПиУ (manba belgilari bilan)                 | F2    | Yuqori                                   |
+| 10  | Balans                                       | F2    | O'rta                                    |
+| 11  | Tekshiruv ekrani (svetofor)                  | F2    | O'rta                                    |
+| 12  | Oy yopish checklist'i                        | F2    | O'rta                                    |
+| 13  | Debitorka/kreditorka reyestri (aging)        | F2    | O'rta                                    |
+| 14  | Oylik vedomosti                              | F2    | O'rta                                    |
+| 15  | Ombor: qoldiqlar va harakat                  | F3    | O'rta                                    |
+| 16  | Ombor: kirim hujjati (EHF dan)               | F3    | O'rta                                    |
+| 17  | Inventarizatsiya varaqasi                    | F3    | Past                                     |
+| 18  | Byudjet (plan/fakt setkasi)                  | F3    | Yuqori                                   |
+| 19  | Moliyaviy model (drayverlar + 3 stsenariy)   | F3    | Yuqori                                   |
+| 20  | Unit-ekonomika va ABC                        | F3    | O'rta                                    |
+| 21  | To'lov arizalari va tasdiqlash               | F3    | O'rta                                    |
+| 22  | Sozlamalar: moddalar, yo'nalishlar, qoidalar | F1–F2 | O'rta                                    |
+| 23  | Foydalanuvchilar va ruxsatlar                | F2    | Past                                     |
+| 24  | Mobil: egasi ko'rinishi                      | F4    | O'rta                                    |
+| 25  | Telegram bot dialoglari                      | F1    | Past                                     |
 
 ## 11. Holatlar (states) — dizaynda unutiladigan joy
 

@@ -30,40 +30,40 @@ O'zbekiston MSB egasi hozir shu holatda:
 
 ### 1.4 Nishon segmentlar (faza 1)
 
-| Segment | Xarakteristika | Nega ular |
-|---|---|---|
-| **A. O'sayotgan MSB** | 5–50 xodim, oborot 300 mln – 5 mlrd so'm/oy, 1–3 yurshaxs | Asosiy bozor. Excel'dan o'sib chiqqan |
-| **B. Loyihaviy biznes** | Qurilish, agentlik, ta'mirlash, IT-autsors | Bitim/loyiha rentabelligi — o'tkir og'riq, to'lashga tayyor |
-| **C. Chakana/onlayn** | Do'kon tarmog'i, marketplace sotuvchisi | Ekvayring + ombor + yo'nalish tahlili |
-| **D. Autsors moliyachi/buxgalter** | 5–30 mijoz yuritadi | **Kanal.** Ular olib kelsa, CAC tushadi. Multi-client kabinet kerak |
+| Segment                            | Xarakteristika                                            | Nega ular                                                           |
+| ---------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------- |
+| **A. O'sayotgan MSB**              | 5–50 xodim, oborot 300 mln – 5 mlrd so'm/oy, 1–3 yurshaxs | Asosiy bozor. Excel'dan o'sib chiqqan                               |
+| **B. Loyihaviy biznes**            | Qurilish, agentlik, ta'mirlash, IT-autsors                | Bitim/loyiha rentabelligi — o'tkir og'riq, to'lashga tayyor         |
+| **C. Chakana/onlayn**              | Do'kon tarmog'i, marketplace sotuvchisi                   | Ekvayring + ombor + yo'nalish tahlili                               |
+| **D. Autsors moliyachi/buxgalter** | 5–30 mijoz yuritadi                                       | **Kanal.** Ular olib kelsa, CAC tushadi. Multi-client kabinet kerak |
 
 **Faza 1 uchun ustuvor: A va B.** D — 6-oydan boshlab, lekin arxitekturada `advisor_workspace` joyi qoldiriladi.
 
 ### 1.5 Personalar
 
-| Persona | Nima qiladi | Nima kerak | Muvaffaqiyat mezoni |
-|---|---|---|---|
-| **Egasi / Direktor** | Kuniga 5 daqiqa qaraydi, qaror qabul qiladi | Bosh ekran, mobil, Telegram dayjest, ogohlantirish | «Bugun tinchmanmi?» — 30 soniyada javob |
-| **Moliyachi / Buxgalter** | Kuniga 30–60 daqiqa yuritadi | Tez kiritish, ommaviy operatsiyalar, sverka, oy yopish | Oy yopish 3 kundan 4 soatgacha |
-| **Operator / Assistent** | Operatsiya taqsimlaydi, hujjat yuklaydi | Sodda navbat interfeysi, klaviatura bilan ishlash | Kuniga 200 operatsiya, 15 daqiqa |
-| **Yo'nalish rahbari** | Byudjetini boshqaradi | Faqat o'z yo'nalishi, plan/fakt, to'lov arizasi | Limitdan chiqmaslik |
+| Persona                   | Nima qiladi                                 | Nima kerak                                             | Muvaffaqiyat mezoni                     |
+| ------------------------- | ------------------------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| **Egasi / Direktor**      | Kuniga 5 daqiqa qaraydi, qaror qabul qiladi | Bosh ekran, mobil, Telegram dayjest, ogohlantirish     | «Bugun tinchmanmi?» — 30 soniyada javob |
+| **Moliyachi / Buxgalter** | Kuniga 30–60 daqiqa yuritadi                | Tez kiritish, ommaviy operatsiyalar, sverka, oy yopish | Oy yopish 3 kundan 4 soatgacha          |
+| **Operator / Assistent**  | Operatsiya taqsimlaydi, hujjat yuklaydi     | Sodda navbat interfeysi, klaviatura bilan ishlash      | Kuniga 200 operatsiya, 15 daqiqa        |
+| **Yo'nalish rahbari**     | Byudjetini boshqaradi                       | Faqat o'z yo'nalishi, plan/fakt, to'lov arizasi        | Limitdan chiqmaslik                     |
 
 ---
 
 ## 2. Rollar va ruxsatlar matritsasi
 
-| Imkoniyat | owner | cfo | accountant | operator | head_of_direction | viewer | auditor |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| Barcha hisobotlar | ✅ | ✅ | ✅ | ➖ | o'z yo'nalishi | ✅ | ✅ |
-| Operatsiya kiritish/tahrirlash | ✅ | ✅ | ✅ | ✅ | ➖ | ➖ | ➖ |
-| Oylik moduli | ✅ | ✅ | opsiya | ➖ | ➖ | ➖ | ✅ |
-| Davr yopish/ochish | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
-| Byudjet tasdiqlash | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
-| To'lov arizasi yaratish | ✅ | ✅ | ✅ | ✅ | ✅ | ➖ | ➖ |
-| To'lov arizasi tasdiqlash | ✅ | ✅ | limit bilan | ➖ | limit bilan | ➖ | ➖ |
-| Sozlamalar, integratsiya, API | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
-| Foydalanuvchi boshqarish | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
-| Audit log | ✅ | ✅ | ➖ | ➖ | ➖ | ➖ | ✅ |
+| Imkoniyat                      | owner | cfo | accountant  | operator | head_of_direction | viewer | auditor |
+| ------------------------------ | :---: | :-: | :---------: | :------: | :---------------: | :----: | :-----: |
+| Barcha hisobotlar              |  ✅   | ✅  |     ✅      |    ➖    |  o'z yo'nalishi   |   ✅   |   ✅    |
+| Operatsiya kiritish/tahrirlash |  ✅   | ✅  |     ✅      |    ✅    |        ➖         |   ➖   |   ➖    |
+| Oylik moduli                   |  ✅   | ✅  |   opsiya    |    ➖    |        ➖         |   ➖   |   ✅    |
+| Davr yopish/ochish             |  ✅   | ✅  |     ➖      |    ➖    |        ➖         |   ➖   |   ➖    |
+| Byudjet tasdiqlash             |  ✅   | ✅  |     ➖      |    ➖    |        ➖         |   ➖   |   ➖    |
+| To'lov arizasi yaratish        |  ✅   | ✅  |     ✅      |    ✅    |        ✅         |   ➖   |   ➖    |
+| To'lov arizasi tasdiqlash      |  ✅   | ✅  | limit bilan |    ➖    |    limit bilan    |   ➖   |   ➖    |
+| Sozlamalar, integratsiya, API  |  ✅   | ✅  |     ➖      |    ➖    |        ➖         |   ➖   |   ➖    |
+| Foydalanuvchi boshqarish       |  ✅   | ➖  |     ➖      |    ➖    |        ➖         |   ➖   |   ➖    |
+| Audit log                      |  ✅   | ✅  |     ➖      |    ➖    |        ➖         |   ➖   |   ✅    |
 
 ---
 
@@ -78,6 +78,7 @@ Ushbu modul mahsulotning eng muhim qismi. Fintablo shu yerda yiqiladi («og'ir, 
 **US-1.1** Yangi foydalanuvchi sifatida men ro'yxatdan o'tgandan **20 daqiqa ichida** birinchi haqiqiy hisobotni ko'rishni xohlayman.
 
 **AC:**
+
 - Sehrgar 5 qadam: (1) biznes turi va soha → (2) yuridik shaxs(lar) va soliq rejimi → (3) hisob raqamlar va boshlang'ich qoldiq → (4) bank ko'chirmasini yuklash (drag&drop) → (5) yo'nalishlar.
 - Soha bo'yicha **tayyor moddalar shabloni** (qurilish / savdo / xizmat / ishlab chiqarish / onlayn-maktab / HoReCa) — 40–60 modda, tahrirlanadigan.
 - Birinchi ko'chirma yuklangach, AI operatsiyalarning ≥70% ini avtomatik kategoriyalaydi; qolgani navbatga tushadi.
@@ -94,6 +95,7 @@ Ushbu modul mahsulotning eng muhim qismi. Fintablo shu yerda yiqiladi («og'ir, 
 **US-2.1** Bank ko'chirmasini yuklab, operatsiyalarim avtomatik tushishini xohlayman.
 
 **AC:**
+
 - Qo'llab-quvvatlanadigan formatlar (UZ, P0): 1C-exchange `.txt`, `.xlsx`, `.csv`, bank PDF (OCR bilan).
 - Kamida 6 ta yirik UZ bankining real ko'chirma formati testda qamrab olinadi.
 - Dublikatlar `(account, date, amount, external_id/description-hash)` bo'yicha aniqlanadi va **avtomatik post qilinmaydi** — foydalanuvchiga ko'rsatiladi.
@@ -102,6 +104,7 @@ Ushbu modul mahsulotning eng muhim qismi. Fintablo shu yerda yiqiladi («og'ir, 
 **US-2.2** Operatsiyalarni tez taqsimlashni xohlayman.
 
 **AC:**
+
 - **Navbat rejimi (inbox):** taqsimlanmagan operatsiyalar ro'yxati, klaviatura bilan (↑↓ / Enter / modda qidiruv), 1 operatsiya ≤ 3 soniyada.
 - **Qoidalar dvigateli:** `agar tavsif ~ "UZCARD KOMISSIYA" va hisob = X → modda = "Ekvayring komissiyasi", yo'nalish = "Chakana"`. Qoidalar tartiblanadi, retroaktiv qo'llanadi.
 - AI taxmini ishonch foizi bilan ko'rsatiladi; qabul qilinsa qoidaga aylantirish taklif qilinadi.
@@ -121,10 +124,11 @@ Ushbu modul mahsulotning eng muhim qismi. Fintablo shu yerda yiqiladi («og'ir, 
 **US-3.1** Har bir bitim/loyihaning haqiqiy rentabelligini ko'rishni xohlayman.
 
 **AC:**
+
 - Bitim kartochkasi: mijoz, summa, bosqichlar, tushum rejasi, to'g'ridan-to'g'ri xarajatlar (xarid, ishbay ish haqi, subpudrat), marja va marja %.
 - **Bosqichli tan olish:** qurilish uchun — bajarilgan ish akti bo'yicha tushum tan olinadi (pul emas).
 - Plan/fakt bitim ichida: ДДС bo'yicha va Daromad/Xarajat bo'yicha ikkita tab.
-- **Bitim shabloni + oydan-oyga nusxalash** *(Fintablo'dagi aniq shikoyat — biz hal qilamiz)*.
+- **Bitim shabloni + oydan-oyga nusxalash** _(Fintablo'dagi aniq shikoyat — biz hal qilamiz)_.
 - Bitimning to'lanmagan qismi avtomatik **debitorkaga** tushadi va kassa kalendarida ko'rinadi.
 
 **US-3.2** Uzun loyihalarda pul yetishmasligini oldindan bilishni xohlayman.
@@ -145,6 +149,7 @@ Ushbu modul mahsulotning eng muhim qismi. Fintablo shu yerda yiqiladi («og'ir, 
 ### M5. Oylik (Zarplata)
 
 **AC:**
+
 - Xodimlar spravochnigi: oklad, kategoriya (sotuv/ishlab chiqarish/ma'muriy → to'g'ridan-to'g'ri yoki bilvosita xarajat), yo'nalish.
 - Hisoblash tiplari: oklad, ishbay (bitimga bog'lanadi), foiz/bonus, avans, ushlab qolish.
 - **UZ soliqlari avtomatik:** JSHDS 12%, ijtimoiy soliq 12% (rejim bo'yicha) — `region_pack` konfiguratsiyasidan.
@@ -205,18 +210,18 @@ Aktivlar (pul, debitorka, zaxira, asosiy vositalar) / Passivlar (kreditorka, kre
 
 Egaga mo'ljallangan bosh ekran — **eng ko'p ochiladigan sahifa**, shunga yarasha ishlanadi:
 
-| Blok | Nima ko'rsatadi |
-|---|---|
-| Pul | Hisoblardagi qoldiq + bugungi harakat + 30 kunlik prognoz chizig'i |
-| Foyda | Joriy oy sof foyda, o'tgan oy bilan, plan bilan |
-| Rentabellik | Yalpi / EBITDA / ROS marjalari, trend |
+| Blok                   | Nima ko'rsatadi                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------- |
+| Pul                    | Hisoblardagi qoldiq + bugungi harakat + 30 kunlik prognoz chizig'i                        |
+| Foyda                  | Joriy oy sof foyda, o'tgan oy bilan, plan bilan                                           |
+| Rentabellik            | Yalpi / EBITDA / ROS marjalari, trend                                                     |
 | Zaxira ko'rsatkichlari | ТБУ (bezubytochlik nuqtasi), moliyaviy xavfsizlik zaxirasi, «necha oy yashaymiz» (runway) |
-| Oborot | Debitorka/kreditorka aylanishi, pul konvertatsiya sikli (CCC) |
-| Ogohlantirishlar | Kassa uzilishi xavfi, byudjetdan chiqish, muddati o'tgan qarz, anomaliya |
+| Oborot                 | Debitorka/kreditorka aylanishi, pul konvertatsiya sikli (CCC)                             |
+| Ogohlantirishlar       | Kassa uzilishi xavfi, byudjetdan chiqish, muddati o'tgan qarz, anomaliya                  |
 
 Har bir kartochka **bosiladi** va tegishli hisobotga olib boradi.
 
-#### 7.5 Tekshiruv ekrani *(raqobatchilarda yo'q)*
+#### 7.5 Tekshiruv ekrani _(raqobatchilarda yo'q)_
 
 Avtomatik sverkalar: `Sof foyda = ΔKapital − dividendlar`; `ΔPul (Balans) = Sof oqim (ДДС)`; taqsimlanmagan operatsiyalar soni; yopilmagan majburiyatlar; kurs farqi qayta baholanmagan hisoblar. **Yashil/qizil svetofor** — hisobotga ishonch darajasi.
 
@@ -228,7 +233,7 @@ Avtomatik sverkalar: `Sof foyda = ΔKapital − dividendlar`; `ΔPul (Balans) = 
 
 **8.2 BDDS / BDR (byudjet).** Modda×yo'nalish×oy bo'yicha reja; plan/fakt/Δ/%; limitdan chiqishda ogohlantirish; byudjet versiyalari va tasdiqlash.
 
-**8.3 Moliyaviy model / stsenariylar** *(Fintablo'da yo'q — asosiy differensiator)*
+**8.3 Moliyaviy model / stsenariylar** _(Fintablo'da yo'q — asosiy differensiator)_
 
 - Drayverlar: mijozlar soni, o'rtacha chek, konversiya, narx, xarajat o'sishi, xodimlar soni, valyuta kursi.
 - 3 stsenariy: pessimistik / bazaviy / optimistik; yonma-yon taqqoslash.
@@ -240,7 +245,7 @@ Avtomatik sverkalar: `Sof foyda = ΔKapital − dividendlar`; `ΔPul (Balans) = 
 
 ---
 
-### M9. Unit-ekonomika va analitika *(Fintablo'da yo'q)*
+### M9. Unit-ekonomika va analitika _(Fintablo'da yo'q)_
 
 - Metrik konstruktori: CAC, LTV, LTV/CAC, ROMI, o'rtacha chek, marja/birlik, breakeven hajmi.
 - Kanal/kampaniya kesimi (marketing xarajati moddalari + tushum manbayi).
@@ -249,7 +254,7 @@ Avtomatik sverkalar: `Sof foyda = ΔKapital − dividendlar`; `ΔPul (Balans) = 
 
 ---
 
-### M10. Oy yopish (Close) *(Fintablo'da yo'q)*
+### M10. Oy yopish (Close) _(Fintablo'da yo'q)_
 
 Checklist: barcha operatsiyalar taqsimlangan → ko'chirmalar yuklangan → majburiyatlar kiritilgan → oylik hisoblangan → amortizatsiya → soliqlar → kurs qayta baholash → bilvosita xarajat taqsimoti → sverkalar yashil → **davrni qulflash**. Har bir punktda mas'ul va status. Qulflangandan keyin faqat storno.
 
@@ -260,35 +265,35 @@ Checklist: barcha operatsiyalar taqsimlangan → ko'chirmalar yuklangan → majb
 - Ochiq REST API + OpenAPI spetsifikatsiyasi (kalit sozlamalarda generatsiya qilinadi).
 - Webhooklar: operatsiya yaratildi, kassa uzilishi xavfi, byudjetdan chiqish, ariza tasdiqlandi.
 - Integratsiyalar ro'yxati va prioriteti — Hujjat 1, §4.1.
-- **1C mapper self-service:** foydalanuvchi 1C hujjat tiplarini o'z moddalariga o'zi bog'laydi *(Fintablo'dagi shikoyat)*.
+- **1C mapper self-service:** foydalanuvchi 1C hujjat tiplarini o'z moddalariga o'zi bog'laydi _(Fintablo'dagi shikoyat)_.
 
 ---
 
 ## 4. Nofunksional talablar
 
-| Kategoriya | Talab |
-|---|---|
-| Ishlash | Hisobot sahifasi p95 < 1.5 s (2 yillik ma'lumot, 200k operatsiya). Dashboard < 1 s. Import: 10k qator < 30 s (fonda) |
-| Aniqlik | Barcha pul hisob-kitoblari `numeric`/decimal. Yaxlitlash faqat ko'rsatishda. `float` **taqiqlangan** |
-| Mavjudlik | 99.9% uptime; kunlik backup + PITR; RPO ≤ 15 daq, RTO ≤ 2 soat |
-| Xavfsizlik | RLS, MFA, audit log, at-rest shifrlash, UZ ma'lumot lokalizatsiyasi |
-| i18n | O'zbek (lotin) + rus + ingliz. **Rus tili birinchi klass.** Kirill o'zbek — keyingi faza |
-| Mobil | Responsive web MVP da; native ilova fazа 3 (egasi uchun read-only + tasdiqlash) |
-| Brauzer | Oxirgi 2 versiya Chrome/Safari/Edge/Firefox |
-| Kirish qulayligi | WCAG 2.1 AA maqsad; klaviatura bilan to'liq navigatsiya (operator ish oqimi uchun majburiy) |
-| Kuzatuv | Tuzilgan loglar, tracing, biznes metrikalari (import muvaffaqiyati, AI aniqligi) |
+| Kategoriya       | Talab                                                                                                                |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Ishlash          | Hisobot sahifasi p95 < 1.5 s (2 yillik ma'lumot, 200k operatsiya). Dashboard < 1 s. Import: 10k qator < 30 s (fonda) |
+| Aniqlik          | Barcha pul hisob-kitoblari `numeric`/decimal. Yaxlitlash faqat ko'rsatishda. `float` **taqiqlangan**                 |
+| Mavjudlik        | 99.9% uptime; kunlik backup + PITR; RPO ≤ 15 daq, RTO ≤ 2 soat                                                       |
+| Xavfsizlik       | RLS, MFA, audit log, at-rest shifrlash, UZ ma'lumot lokalizatsiyasi                                                  |
+| i18n             | O'zbek (lotin) + rus + ingliz. **Rus tili birinchi klass.** Kirill o'zbek — keyingi faza                             |
+| Mobil            | Responsive web MVP da; native ilova fazа 3 (egasi uchun read-only + tasdiqlash)                                      |
+| Brauzer          | Oxirgi 2 versiya Chrome/Safari/Edge/Firefox                                                                          |
+| Kirish qulayligi | WCAG 2.1 AA maqsad; klaviatura bilan to'liq navigatsiya (operator ish oqimi uchun majburiy)                          |
+| Kuzatuv          | Tuzilgan loglar, tracing, biznes metrikalari (import muvaffaqiyati, AI aniqligi)                                     |
 
 ---
 
 ## 5. Yo'l xaritasi
 
-| Faza | Muddat | Qamrov | Chiqish mezoni |
-|---|---|---|---|
-| **F0 — Poydevor** | 0–6 hafta | Monorepo, DB sxema, ledger dvigateli + invariantlar, auth/RBAC/RLS, `region_pack` skeleti, dizayn tizimi | Ledger 100% test qoplamasi; sintetik ma'lumotda balans teng |
-| **F1 — MVP (yopiq beta)** | 6–16 hafta | Onboarding, hisoblar, operatsiyalar+navbat+qoidalar, import (6 bank), ДДС, to'lov kalendari, Telegram bot, KPI panelining pul bloki | 10 pilot mijoz, 20 daq'da birinchi hisobot |
-| **F2 — Yadro** | 16–28 hafta | Majburiyatlar, bitimlar, oylik, mol-mulk, kreditlar, soliqlar, **ОПиУ**, **Balans**, Tekshiruv ekrani, oy yopish | Pilot mijozda oy to'liq yopiladi; sverkalar yashil |
-| **F3 — To'liq** | 28–40 hafta | BDDS/BDR, to'lov arizalari, moliyaviy model/stsenariylar, unit-ekonomika, ABC, konsolidatsiya+eliminatsiya, EHF/ekvayring integratsiyalari, ochiq API | 100 to'lovchi mijoz |
-| **F4 — AI + Multi-region** | 40–56 hafta | AI to'liq qatlami, narrativ hisobotlar, anomaliya, `ru`/`kz` region paketlari, autsors moliyachi kabineti, mobil ilova | 2-mamlakatga chiqish |
+| Faza                       | Muddat      | Qamrov                                                                                                                                                | Chiqish mezoni                                              |
+| -------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **F0 — Poydevor**          | 0–6 hafta   | Monorepo, DB sxema, ledger dvigateli + invariantlar, auth/RBAC/RLS, `region_pack` skeleti, dizayn tizimi                                              | Ledger 100% test qoplamasi; sintetik ma'lumotda balans teng |
+| **F1 — MVP (yopiq beta)**  | 6–16 hafta  | Onboarding, hisoblar, operatsiyalar+navbat+qoidalar, import (6 bank), ДДС, to'lov kalendari, Telegram bot, KPI panelining pul bloki                   | 10 pilot mijoz, 20 daq'da birinchi hisobot                  |
+| **F2 — Yadro**             | 16–28 hafta | Majburiyatlar, bitimlar, oylik, mol-mulk, kreditlar, soliqlar, **ОПиУ**, **Balans**, Tekshiruv ekrani, oy yopish                                      | Pilot mijozda oy to'liq yopiladi; sverkalar yashil          |
+| **F3 — To'liq**            | 28–40 hafta | BDDS/BDR, to'lov arizalari, moliyaviy model/stsenariylar, unit-ekonomika, ABC, konsolidatsiya+eliminatsiya, EHF/ekvayring integratsiyalari, ochiq API | 100 to'lovchi mijoz                                         |
+| **F4 — AI + Multi-region** | 40–56 hafta | AI to'liq qatlami, narrativ hisobotlar, anomaliya, `ru`/`kz` region paketlari, autsors moliyachi kabineti, mobil ilova                                | 2-mamlakatga chiqish                                        |
 
 **Kritik yo'l:** F0 dagi ledger dvigateli. Agar u noto'g'ri qurilsa, F2 da qayta yozish kerak bo'ladi va loyiha o'ladi.
 
@@ -298,12 +303,12 @@ Checklist: barcha operatsiyalar taqsimlangan → ko'chirmalar yuklangan → majb
 
 Fintablo'ning xatosi — ОПиУ va to'lov kalendarini o'rta tarifga yashirish. Biz teskarisini qilamiz: **qiymat bazaviy tarifda, hajm va murakkablik uchun pul olinadi.**
 
-| Tarif | Kim uchun | Ichida | Narx gipotezasi (UZS/oy) |
-|---|---|---|---|
-| **Start** | YaTT, mikro | 1 yurshaxs, 2 foydalanuvchi, ДДС + **ОПиУ** + kalendar + KPI | 290 000 |
-| **Biznes** | O'sayotgan MSB | 3 yurshaxs, 7 foydalanuvchi, + bitimlar, majburiyatlar, oylik, Balans, byudjet | 690 000 |
-| **Pro** | O'rta biznes | cheklanmagan yurshaxs/foydalanuvchi, + moliyaviy model, unit-ekonomika, API, konsolidatsiya, AI | 1 490 000 |
-| **Advisor** | Autsors moliyachi | Multi-client kabinet, mijoz boshiga narx | shartnoma |
+| Tarif       | Kim uchun         | Ichida                                                                                          | Narx gipotezasi (UZS/oy) |
+| ----------- | ----------------- | ----------------------------------------------------------------------------------------------- | ------------------------ |
+| **Start**   | YaTT, mikro       | 1 yurshaxs, 2 foydalanuvchi, ДДС + **ОПиУ** + kalendar + KPI                                    | 290 000                  |
+| **Biznes**  | O'sayotgan MSB    | 3 yurshaxs, 7 foydalanuvchi, + bitimlar, majburiyatlar, oylik, Balans, byudjet                  | 690 000                  |
+| **Pro**     | O'rta biznes      | cheklanmagan yurshaxs/foydalanuvchi, + moliyaviy model, unit-ekonomika, API, konsolidatsiya, AI | 1 490 000                |
+| **Advisor** | Autsors moliyachi | Multi-client kabinet, mijoz boshiga narx                                                        | shartnoma                |
 
 Bepul: 14 kun to'liq (karta talab qilinmaydi). Yillik to'lovda −20%.
 
@@ -313,29 +318,29 @@ Bepul: 14 kun to'liq (karta talab qilinmaydi). Yillik to'lovda −20%.
 
 ## 7. Muvaffaqiyat metrikalari
 
-| Bosqich | Metrika | Maqsad |
-|---|---|---|
-| Aktivatsiya | Ro'yxatdan → birinchi hisobot | ≤ 20 daqiqa, ≥ 60% |
-| Aktivatsiya | 7 kun ichida ko'chirma yuklagan | ≥ 70% |
-| Odat | Haftada ≥ 3 kun kirish (egasi) | ≥ 50% |
-| Qiymat | Oy yopish vaqti | −70% |
-| Sifat | AI avtokategoriyalash aniqligi | ≥ 85% (2 oydan keyin ≥ 93%) |
-| Biznes | Logo retention 12 oy | ≥ 85% |
-| Biznes | NRR | ≥ 110% |
+| Bosqich     | Metrika                         | Maqsad                      |
+| ----------- | ------------------------------- | --------------------------- |
+| Aktivatsiya | Ro'yxatdan → birinchi hisobot   | ≤ 20 daqiqa, ≥ 60%          |
+| Aktivatsiya | 7 kun ichida ko'chirma yuklagan | ≥ 70%                       |
+| Odat        | Haftada ≥ 3 kun kirish (egasi)  | ≥ 50%                       |
+| Qiymat      | Oy yopish vaqti                 | −70%                        |
+| Sifat       | AI avtokategoriyalash aniqligi  | ≥ 85% (2 oydan keyin ≥ 93%) |
+| Biznes      | Logo retention 12 oy            | ≥ 85%                       |
+| Biznes      | NRR                             | ≥ 110%                      |
 
 ---
 
 ## 8. Xavflar
 
-| Xavf | Ta'sir | Yumshatish |
-|---|---|---|
-| Bank integratsiyalari yo'qligi (UZ da ochiq banking zaif) | Yuqori | Parser-first: 10+ bank formatiga robust parser + OCR; bank API'lari bonus sifatida |
-| Ledger murakkabligi jamoani sekinlashtiradi | Yuqori | F0 da yakka mas'ul senior; ledger paketiga qattiq API chegarasi; property-based testlar |
-| Onboarding og'irligi (Fintablo kasalligi) | Yuqori | 20 daqiqa qoidasi — release blokerи; har sprintda foydalanuvchi testi |
-| Foydalanuvchi buxgalter bilan chalkashtiradi | O'rta | Pozitsiyalash: «buxgalteriya emas»; 1C bilan yonma-yon ishlash ssenariysi |
-| Soliq qonuni yiliga o'zgaradi | O'rta | Stavkalar — versiyalangan konfiguratsiya, kodda emas |
-| Ma'lumot lokalizatsiyasi talabi | O'rta | Birinchi kundan region bo'yicha ajratilgan deployment |
-| AI noto'g'ri raqam ko'rsatadi → ishonch yo'qoladi | **Kritik** | AI hech qachon raqam hisoblamaydi; faqat tanlaydi va izohlaydi |
+| Xavf                                                      | Ta'sir     | Yumshatish                                                                              |
+| --------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------- |
+| Bank integratsiyalari yo'qligi (UZ da ochiq banking zaif) | Yuqori     | Parser-first: 10+ bank formatiga robust parser + OCR; bank API'lari bonus sifatida      |
+| Ledger murakkabligi jamoani sekinlashtiradi               | Yuqori     | F0 da yakka mas'ul senior; ledger paketiga qattiq API chegarasi; property-based testlar |
+| Onboarding og'irligi (Fintablo kasalligi)                 | Yuqori     | 20 daqiqa qoidasi — release blokerи; har sprintda foydalanuvchi testi                   |
+| Foydalanuvchi buxgalter bilan chalkashtiradi              | O'rta      | Pozitsiyalash: «buxgalteriya emas»; 1C bilan yonma-yon ishlash ssenariysi               |
+| Soliq qonuni yiliga o'zgaradi                             | O'rta      | Stavkalar — versiyalangan konfiguratsiya, kodda emas                                    |
+| Ma'lumot lokalizatsiyasi talabi                           | O'rta      | Birinchi kundan region bo'yicha ajratilgan deployment                                   |
+| AI noto'g'ri raqam ko'rsatadi → ishonch yo'qoladi         | **Kritik** | AI hech qachon raqam hisoblamaydi; faqat tanlaydi va izohlaydi                          |
 
 ---
 
@@ -348,7 +353,6 @@ Ochiq aytiladi, keyin bahs bo'lmasligi uchun:
 - CRM funksiyalari (faqat integratsiya)
 - IFRS/konsolidatsiya standartlari bo'yicha rasmiy hisobot
 - Native mobil ilova (F4 da)
-
 
 ---
 

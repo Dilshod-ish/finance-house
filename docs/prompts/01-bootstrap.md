@@ -1,6 +1,6 @@
 # Bootstrap — birinchi sessiya
 
-````
+```
 Bootstrap the FinCore repository. Read CLAUDE.md, docs/domain/architecture.md,
 and docs/domain/prd.md first — everything below assumes them.
 
@@ -77,6 +77,6 @@ Constraints:
   - Do not stub anything you would have to rewrite. If something needs a
     decision I have not made, ask me — one question, with options.
   - After each step: run the tests and paste the real output. Then stop.
-````
+```
 
 ---
