@@ -1,17 +1,16 @@
-/**
- * Languages a pack ships. `ru` is first-class in `uz` (PRD §4): Russian is
- * still the working language of much of Uzbek business.
- */
-export type Language = 'uz' | 'ru' | 'en';
+// The i18n primitives live in @fincore/shared (CLAUDE.md §4); re-exported so
+// pack authors have one import site.
+export {
+  LANGUAGES,
+  auditMessages,
+  declaredKeys,
+  messagesFromRows,
+  type Language,
+  type Messages,
+  type MissingTranslation,
+} from '@fincore/shared';
 
-export const LANGUAGES: readonly Language[] = ['uz', 'ru', 'en'];
-
-/**
- * User-facing text lives here as locale keys, never as localized strings in the
- * database (CLAUDE.md §9). A pack must translate every key it declares into
- * every language it lists.
- */
-export type Messages = Readonly<Record<Language, Readonly<Record<string, string>>>>;
+import type { Language } from '@fincore/shared';
 
 export interface LocaleConfig {
   readonly languages: readonly Language[];

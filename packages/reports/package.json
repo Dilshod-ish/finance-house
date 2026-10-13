@@ -18,14 +18,25 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:unit": "vitest run",
-    "coverage": "vitest run --coverage",
-    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
+    "coverage": "vitest run --config vitest.coverage.config.ts --coverage",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "devDependencies": {
     "@fincore/eslint-config": "workspace:*",
     "@fincore/tsconfig": "workspace:*",
     "eslint": "10.9.1",
     "typescript": "5.9.3",
-    "vitest": "4.1.11"
+    "vitest": "4.1.11",
+    "@vitest/coverage-v8": "4.1.11",
+    "@fincore/seed": "workspace:*",
+    "@testcontainers/postgresql": "12.1.0",
+    "testcontainers": "12.1.0",
+    "postgres": "3.4.9"
+  },
+  "dependencies": {
+    "@fincore/db": "workspace:*",
+    "@fincore/shared": "workspace:*",
+    "drizzle-orm": "0.45.2"
   }
 }

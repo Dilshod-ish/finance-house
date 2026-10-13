@@ -1,0 +1,29 @@
+BALANCE SHEET as of 2026-03-31 (UZS)
+================================================================
+ASSETS                                           2387581599.5000
+  Current assets                                 2387581599.5000
+    Cash and equivalents                         2191476832.5000
+    Receivables                                   196104767.0000
+    Prepayments made                                      0.0000
+    Inventory                                             0.0000
+    Recoverable taxes                                     0.0000
+  Non-current assets                                      0.0000
+    Fixed assets, net                                     0.0000
+LIABILITIES AND EQUITY                           2387581599.5000
+  Current liabilities                              28532343.0000
+    Trade payables                                 28532343.0000
+    Prepayments received                                  0.0000
+    Payroll payable                                       0.0000
+    Taxes payable                                         0.0000
+    Accrued interest                                      0.0000
+  Non-current liabilities                                 0.0000
+    Loans and leases                                      0.0000
+  Total liabilities                                28532343.0000
+  Equity                                         2359049256.5000
+    Share capital                                 135000000.0000
+    Retained earnings                             365000000.0000
+    Result for the period                        1859049256.5000
+    Dividends and owner draws                             0.0000
+----------------------------------------------------------------
+Difference (assets - liabilities - equity)                0.0000
+balanced: true

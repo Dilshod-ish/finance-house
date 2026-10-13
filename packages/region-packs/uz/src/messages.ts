@@ -1,4 +1,9 @@
-import { LANGUAGES, type Language, type Messages } from '@fincore/region-pack-contract';
+import {
+  LANGUAGES,
+  messagesFromRows,
+  type Language,
+  type Messages,
+} from '@fincore/region-pack-contract';
 
 /**
  * One row per key, in the order `uz, ru, en`. Keeping the three languages side
@@ -220,15 +225,7 @@ const TRIPLES = {
 
 export type MessageKey = keyof typeof TRIPLES;
 
-function tableFor(index: 0 | 1 | 2): Record<string, string> {
-  return Object.fromEntries(Object.entries(TRIPLES).map(([key, values]) => [key, values[index]]));
-}
-
-export const MESSAGES: Messages = {
-  uz: tableFor(0),
-  ru: tableFor(1),
-  en: tableFor(2),
-};
+export const MESSAGES: Messages = messagesFromRows(TRIPLES);
 
 /** Guards the triple table against drift if LANGUAGES ever grows. */
 export const TRANSLATED_LANGUAGES: readonly Language[] = LANGUAGES;

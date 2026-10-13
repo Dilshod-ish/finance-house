@@ -64,8 +64,9 @@ jobs:
       - run: pnpm test:integration
         env:
           TESTCONTAINERS_RYUK_DISABLED: 'true'
-      # packages/ledger enforces 100% branch coverage (CLAUDE.md §6); its I/O
-      # shell is only exercised against a real Postgres, so it runs here.
-      - run: pnpm --filter @fincore/ledger coverage
+      # ledger and reports enforce 100% branch coverage (CLAUDE.md §6); their
+      # query layers are only exercised against a real Postgres, so both run
+      # here rather than in the unit job.
+      - run: pnpm --filter @fincore/ledger --filter @fincore/reports coverage
         env:
           TESTCONTAINERS_RYUK_DISABLED: 'true'
