@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import postgres from 'postgres';
-import { createDatabase, migrateToLatest, type Database } from '../src/index.js';
+import { createDatabase, migrateToLatest, type Database } from './index.js';
 
 const ROLES_SQL = join(
   dirname(fileURLToPath(import.meta.url)),

@@ -38,7 +38,7 @@ test-unit: ## Run unit tests only
 test-integration: ## Run integration tests (needs Docker or TEST_DATABASE_URL)
 	pnpm test:integration
 
-coverage: ## Run tests with coverage
+coverage: ## Run tests with coverage (ledger enforces 100% branches)
 	pnpm coverage
 
 db-generate: ## Generate a Drizzle migration from the schema

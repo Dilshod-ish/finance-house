@@ -1,17 +1,20 @@
 import { randomUUID } from 'node:crypto';
 import type { TransactionSql } from 'postgres';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createTestDatabase, type TestDatabase } from './harness.js';
-import { postRawEntry, seedOrg, type OrgFixture } from './fixtures.js';
+import { createTestDatabase, type TestDatabase } from '../src/testing.js';
+import { postRawEntry, seedOrg, type OrgFixture } from '../src/testing.js';
 
 let h: TestDatabase;
 let acme: OrgFixture;
 let other: OrgFixture;
+/** A third tenant, so lock tests cannot leak into the others' fixtures. */
+let locked: OrgFixture;
 
 beforeAll(async () => {
   h = await createTestDatabase();
   acme = await seedOrg(h.client, 'Acme');
   other = await seedOrg(h.client, 'Other');
+  locked = await seedOrg(h.client, 'Locked');
 }, 180_000);
 
 afterAll(async () => {
@@ -234,6 +237,61 @@ describe('I4 — the ledger is append-only', () => {
       ),
     );
     expect(second).toBe('FI004');
+  });
+});
+
+describe('I2 + I4 — a locked period is still correctable by reversal', () => {
+  it('accepts the reversed_by_id stamp on an entry inside a locked period', async () => {
+    const original = await postRawEntry(h.client, locked, {
+      accrualDate: '2026-05-10',
+      lines: [
+        { glAccountId: locked.cashGl, side: 'D', amount: '9.0000' },
+        { glAccountId: locked.revenueGl, side: 'C', amount: '9.0000' },
+      ],
+    });
+    const reversal = await postRawEntry(h.client, locked, {
+      accrualDate: '2026-06-01',
+      kind: 'reversal',
+      reversesId: original,
+      reversalReason: 'audit',
+      lines: [
+        { glAccountId: locked.cashGl, side: 'C', amount: '9.0000' },
+        { glAccountId: locked.revenueGl, side: 'D', amount: '9.0000' },
+      ],
+    });
+    await inOrg(
+      locked.orgId,
+      (tx) => tx`
+        insert into period_lock (org_id, legal_entity_id, locked_through_date)
+        values (${locked.orgId}, ${locked.legalEntityId}, '2026-05-31')
+        on conflict (org_id, legal_entity_id)
+          do update set locked_through_date = excluded.locked_through_date`,
+    );
+
+    // The financial correction already sits in June; only the back-reference
+    // touches the locked May entry, and I4 allows exactly that one change.
+    await inOrg(
+      locked.orgId,
+      (tx) => tx`update journal_entry set reversed_by_id = ${reversal} where id = ${original}`,
+    );
+    const rows = await inOrg(
+      locked.orgId,
+      (tx) => tx`select reversed_by_id from journal_entry where id = ${original}`,
+    );
+    expect(rows).toEqual([{ reversed_by_id: reversal }]);
+  });
+
+  it('still refuses a new entry inside the locked period', async () => {
+    const code = await errorCodeOf(() =>
+      postRawEntry(h.client, locked, {
+        accrualDate: '2026-05-20',
+        lines: [
+          { glAccountId: locked.cashGl, side: 'D', amount: '1.0000' },
+          { glAccountId: locked.revenueGl, side: 'C', amount: '1.0000' },
+        ],
+      }),
+    );
+    expect(code).toBe('FI002');
   });
 });
 

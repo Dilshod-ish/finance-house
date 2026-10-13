@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { migrateDown, migrateToLatest } from '../src/index.js';
-import { createTestDatabase, type TestDatabase } from './harness.js';
+import { createTestDatabase, type TestDatabase } from '../src/testing.js';
 
 let h: TestDatabase;
 
@@ -39,8 +39,12 @@ describe('migrations', () => {
   });
 
   it('rolls back and re-applies (reversible)', async () => {
-    const rolledBack = await migrateDown({ url: h.url, steps: 2 });
-    expect(rolledBack).toEqual(['0001_invariants.down.sql', '0000_init.down.sql']);
+    const rolledBack = await migrateDown({ url: h.url, steps: 3 });
+    expect(rolledBack).toEqual([
+      '0002_reversal_in_locked_period.down.sql',
+      '0001_invariants.down.sql',
+      '0000_init.down.sql',
+    ]);
     expect(await tableCount(h)).toBe(0);
 
     await migrateToLatest({ url: h.url });

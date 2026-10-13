@@ -15,6 +15,13 @@
       "when": 1788180051442,
       "tag": "0001_invariants",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788183978517,
+      "tag": "0002_reversal_in_locked_period",
+      "breakpoints": true
     }
   ]
 }

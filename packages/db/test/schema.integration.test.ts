@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { TENANT_SCOPED_TABLES } from '../src/index.js';
-import { createTestDatabase, type TestDatabase } from './harness.js';
+import { createTestDatabase, type TestDatabase } from '../src/testing.js';
 
 let h: TestDatabase;
 
