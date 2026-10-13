@@ -53,6 +53,30 @@ export function addDays(date: IsoDate, days: number): IsoDate {
   return fromUtcDate(base);
 }
 
+/**
+ * Shifts by whole months, clamping the day to the target month's length so
+ * 31 January minus one month is 31 December and plus one month is 28 February.
+ */
+export function addMonths(date: IsoDate, months: number): IsoDate {
+  const year = Number(date.slice(0, 4));
+  const month = Number(date.slice(5, 7));
+  const day = Number(date.slice(8, 10));
+  const shifted = year * 12 + (month - 1) + months;
+  const targetYear = Math.floor(shifted / 12);
+  const targetMonth = (shifted % 12) + 1;
+  const clamped = Math.min(day, daysInMonth(targetYear, targetMonth));
+  return `${String(targetYear).padStart(4, '0')}-${String(targetMonth).padStart(2, '0')}-${String(
+    clamped,
+  ).padStart(2, '0')}` as IsoDate;
+}
+
+/** Whole months between two dates, ignoring the day of month. */
+export function monthsBetween(from: IsoDate, to: IsoDate): number {
+  const fromIndex = Number(from.slice(0, 4)) * 12 + Number(from.slice(5, 7));
+  const toIndex = Number(to.slice(0, 4)) * 12 + Number(to.slice(5, 7));
+  return toIndex - fromIndex;
+}
+
 /** `YYYY-MM` — the period key used by locks, budgets and monthly reports. */
 export type MonthKey = string & { readonly __brand: 'MonthKey' };
 

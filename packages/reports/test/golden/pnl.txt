@@ -1,0 +1,22 @@
+PROFIT AND LOSS 2026-01-01 .. 2026-03-31 (UZS)
+============================================================
+Revenue                                      1709505612.5000
+  Cost of sales                                       0.0000
+Gross profit                                 1709505612.5000
+  Gross margin, %                                   100.0000
+  Variable costs                               56184175.0000
+Marginal profit                              1653321437.5000
+  Marginal margin, %                                 96.7134
+  Fixed costs                                 138056442.0000
+  Unclassified costs                                  0.0000
+EBITDA                                       1515264995.5000
+  EBITDA margin, %                                   88.6376
+  Depreciation                                        0.0000
+  Interest                                            0.0000
+  Taxes                                               0.0000
+  FX difference                               -11188506.0000
+  Other income                                332595755.0000
+Net profit                                   1859049256.5000
+  Net margin (ROS), %                               108.7478
+  Dividends and owner draws                           0.0000
+Retained for the period                      1859049256.5000

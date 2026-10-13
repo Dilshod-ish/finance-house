@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   addDays,
+  addMonths,
+  monthsBetween,
   compareIsoDate,
   endOfMonth,
   fromUtcDate,
@@ -38,6 +40,22 @@ describe('IsoDate', () => {
   it('walks days across month and year boundaries', () => {
     expect(addDays(isoDate('2026-01-31'), 1)).toBe('2026-02-01');
     expect(addDays(isoDate('2026-01-01'), -1)).toBe('2025-12-31');
+  });
+
+  it('shifts whole months, clamping the day to the target month', () => {
+    expect(addMonths(isoDate('2026-01-31'), 1)).toBe('2026-02-28');
+    expect(addMonths(isoDate('2026-01-31'), -1)).toBe('2025-12-31');
+    expect(addMonths(isoDate('2026-03-15'), 0)).toBe('2026-03-15');
+    expect(addMonths(isoDate('2026-12-01'), 1)).toBe('2027-01-01');
+    expect(addMonths(isoDate('2026-01-01'), -1)).toBe('2025-12-01');
+    expect(addMonths(isoDate('2024-01-31'), 1)).toBe('2024-02-29');
+  });
+
+  it('counts whole months between two dates', () => {
+    expect(monthsBetween(isoDate('2026-01-01'), isoDate('2026-03-31'))).toBe(2);
+    expect(monthsBetween(isoDate('2026-03-01'), isoDate('2026-03-31'))).toBe(0);
+    expect(monthsBetween(isoDate('2025-11-01'), isoDate('2026-02-01'))).toBe(3);
+    expect(monthsBetween(isoDate('2026-03-01'), isoDate('2026-01-01'))).toBe(-2);
   });
 
   it('derives period boundaries', () => {

@@ -9,7 +9,6 @@ import { Money, auditMessages, currency, declaredKeys, isoDate } from '@fincore/
 import {
   BALANCE_SHEET,
   REPORT_MESSAGES,
-  REPORT_MESSAGE_KEYS,
   createReports,
   type BalanceSheetReport,
   type Reports,
@@ -176,15 +175,13 @@ describe('getBalanceSheet', () => {
     }
   });
 
-  it('translates every label the structure asks for, with none left over', () => {
+  it('translates every label this structure asks for', () => {
     // Audited against BALANCE_SHEET's labelKeys, not the message table's own
     // keys: checking a table against itself cannot catch a renamed line whose
-    // label key was left behind.
+    // label key was left behind. The unused-key half lives in the P&L suite,
+    // which audits every structure at once.
     const keys = declaredKeys(BALANCE_SHEET.map((spec) => spec.labelKey));
-    const { missing, unused } = auditMessages(REPORT_MESSAGES, keys);
-    expect(missing).toEqual([]);
-    expect(unused).toEqual([]);
-    expect(keys).toEqual([...REPORT_MESSAGE_KEYS].sort());
+    expect(auditMessages(REPORT_MESSAGES, keys).missing).toEqual([]);
   });
 
   it('matches the checked-in golden file', async () => {

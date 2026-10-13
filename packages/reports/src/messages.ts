@@ -67,6 +67,42 @@ const ROWS = {
     'Дивиденды и изъятия собственника',
     'Dividends and owner draws',
   ],
+  'pnl.revenue': ['Tushum', 'Выручка', 'Revenue'],
+  'pnl.cogs': ['Sotilgan mahsulot tannarxi', 'Себестоимость продаж', 'Cost of sales'],
+  'pnl.grossProfit': ['Yalpi foyda', 'Валовая прибыль', 'Gross profit'],
+  'pnl.grossMargin': ['Yalpi marja, %', 'Валовая маржа, %', 'Gross margin, %'],
+  'pnl.opexVariable': ['O‘zgaruvchan xarajatlar', 'Переменные расходы', 'Variable costs'],
+  'pnl.marginalProfit': ['Marjinal foyda', 'Маржинальная прибыль', 'Marginal profit'],
+  'pnl.marginalMargin': [
+    'Marjinal daromadlilik, %',
+    'Маржинальная рентабельность, %',
+    'Marginal margin, %',
+  ],
+  'pnl.opexFixed': ['Doimiy xarajatlar', 'Постоянные расходы', 'Fixed costs'],
+  'pnl.opexUnclassified': [
+    'Taqsimlanmagan xarajatlar',
+    'Нераспределённые расходы',
+    'Unclassified costs',
+  ],
+  'pnl.ebitda': ['EBITDA', 'EBITDA', 'EBITDA'],
+  'pnl.ebitdaMargin': ['EBITDA marjasi, %', 'Маржа EBITDA, %', 'EBITDA margin, %'],
+  'pnl.depreciation': ['Amortizatsiya', 'Амортизация', 'Depreciation'],
+  'pnl.interest': ['Foizlar', 'Проценты', 'Interest'],
+  'pnl.tax': ['Soliqlar', 'Налоги', 'Taxes'],
+  'pnl.fxDifference': ['Kurs farqi', 'Курсовая разница', 'FX difference'],
+  'pnl.otherIncome': ['Boshqa daromadlar', 'Прочие доходы', 'Other income'],
+  'pnl.netProfit': ['Sof foyda', 'Чистая прибыль', 'Net profit'],
+  'pnl.netMargin': [
+    'Sof rentabellik (ROS), %',
+    'Чистая рентабельность (ROS), %',
+    'Net margin (ROS), %',
+  ],
+  'pnl.dividends': [
+    'Dividendlar va egasining chiqimlari',
+    'Дивиденды и изъятия собственника',
+    'Dividends and owner draws',
+  ],
+  'pnl.retained': ['Taqsimlanmagan foyda', 'Нераспределённая прибыль', 'Retained for the period'],
 } as const satisfies Record<string, readonly [string, string, string]>;
 
 export type ReportMessageKey = keyof typeof ROWS;
