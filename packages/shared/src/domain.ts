@@ -75,3 +75,103 @@ export type MembershipRole = (typeof MEMBERSHIP_ROLES)[number];
 export function inList(values: readonly string[]): string {
   return values.map((v) => `'${v}'`).join(', ');
 }
+
+/**
+ * What a report resolves a GL account by, independent of a country's account
+ * numbering. A balance sheet groups by role; I5 finds cash accounts by role.
+ */
+export type GlAccountRole =
+  // Assets
+  | 'cash'
+  | 'money_in_transit'
+  | 'receivable'
+  | 'prepaid'
+  | 'inventory'
+  | 'input_vat'
+  | 'fixed_asset'
+  | 'accumulated_depreciation'
+  // Liabilities
+  | 'payable'
+  | 'advance_received'
+  | 'payroll_payable'
+  | 'loan'
+  | 'accrued_interest'
+  | 'output_vat'
+  | 'tax_payable'
+  // Equity
+  | 'share_capital'
+  | 'retained_earnings'
+  | 'owner_draw'
+  // Income
+  | 'revenue'
+  | 'other_income'
+  // Expenses
+  | 'cost_of_sales'
+  | 'expense'
+  | 'depreciation'
+  | 'interest_expense'
+  | 'tax_expense'
+  | 'fx_difference';
+
+export const GL_ACCOUNT_ROLES: readonly GlAccountRole[] = [
+  'cash',
+  'money_in_transit',
+  'receivable',
+  'prepaid',
+  'inventory',
+  'input_vat',
+  'fixed_asset',
+  'accumulated_depreciation',
+  'payable',
+  'advance_received',
+  'payroll_payable',
+  'loan',
+  'accrued_interest',
+  'output_vat',
+  'tax_payable',
+  'share_capital',
+  'retained_earnings',
+  'owner_draw',
+  'revenue',
+  'other_income',
+  'cost_of_sales',
+  'expense',
+  'depreciation',
+  'interest_expense',
+  'tax_expense',
+  'fx_difference',
+];
+
+/**
+ * The account class each role must belong to. A balance sheet that groups by
+ * role has to be able to trust that `loan` is a liability — otherwise a
+ * mis-tagged account moves money across the balance sheet silently.
+ */
+export const ROLE_ACCOUNT_TYPE: Readonly<Record<GlAccountRole, GlAccountType>> = {
+  cash: 'asset',
+  money_in_transit: 'asset',
+  receivable: 'asset',
+  prepaid: 'asset',
+  inventory: 'asset',
+  input_vat: 'asset',
+  fixed_asset: 'asset',
+  accumulated_depreciation: 'asset',
+  payable: 'liability',
+  advance_received: 'liability',
+  payroll_payable: 'liability',
+  loan: 'liability',
+  accrued_interest: 'liability',
+  output_vat: 'liability',
+  tax_payable: 'liability',
+  share_capital: 'equity',
+  retained_earnings: 'equity',
+  owner_draw: 'equity',
+  revenue: 'income',
+  other_income: 'income',
+  cost_of_sales: 'expense',
+  expense: 'expense',
+  depreciation: 'expense',
+  interest_expense: 'expense',
+  tax_expense: 'expense',
+  fx_difference: 'expense',
+};

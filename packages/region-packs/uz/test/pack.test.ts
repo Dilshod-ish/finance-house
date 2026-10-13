@@ -5,6 +5,8 @@ import {
   auditMessages,
   cashGlAccountFor,
   glAccountsByRole,
+  GL_ACCOUNT_ROLES,
+  ROLE_ACCOUNT_TYPE,
   declaredKeys,
   legalFormByCode,
   rateEffectiveOn,
@@ -180,6 +182,55 @@ describe('uz pack — account roles', () => {
       'revenue',
       'expense',
       'fx_difference',
+      'retained_earnings',
+    ] as const) {
+      expect([role, glAccountsByRole(pack, role).length > 0]).toEqual([role, true]);
+    }
+  });
+
+  it('gives every account a role — an unroled account falls out of every report', () => {
+    for (const account of pack.chartOfAccountsTemplate) {
+      expect([account.code, typeof account.role]).toEqual([account.code, 'string']);
+      expect([account.code, GL_ACCOUNT_ROLES.includes(account.role)]).toEqual([account.code, true]);
+    }
+  });
+
+  it('keeps each role in the account class it belongs to', () => {
+    // A balance sheet that groups by role must be able to trust that `loan` is
+    // a liability; a mis-tagged account would move money across the sheet.
+    for (const account of pack.chartOfAccountsTemplate) {
+      expect([account.code, account.role, account.type]).toEqual([
+        account.code,
+        account.role,
+        ROLE_ACCOUNT_TYPE[account.role],
+      ]);
+    }
+  });
+
+  it('separates tax expense from FX difference (§7.2 has a line for each)', () => {
+    const tax = glAccountsByRole(pack, 'tax_expense');
+    const fx = glAccountsByRole(pack, 'fx_difference');
+    expect(tax).toHaveLength(1);
+    expect(fx).toHaveLength(1);
+    expect(tax[0]?.code).not.toBe(fx[0]?.code);
+
+    const template = articleTemplateFor(pack, 'services');
+    if (template === undefined) throw new Error('template missing');
+    const taxArticle = template.articles.find((a) => a.pnlLineCode === 'tax');
+    const fxArticle = template.articles.find((a) => a.pnlLineCode === 'fx_difference');
+    expect(taxArticle?.glAccountCode).toBe(tax[0]?.code);
+    expect(fxArticle?.glAccountCode).toBe(fx[0]?.code);
+  });
+
+  it('covers every balance-sheet line architecture §7.3 names', () => {
+    for (const role of [
+      'cash',
+      'receivable',
+      'inventory',
+      'fixed_asset',
+      'payable',
+      'loan',
+      'share_capital',
       'retained_earnings',
     ] as const) {
       expect([role, glAccountsByRole(pack, role).length > 0]).toEqual([role, true]);

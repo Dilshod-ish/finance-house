@@ -37,10 +37,10 @@ export async function seedOrg(
       insert into legal_entity (id, org_id, name, functional_currency)
       values (${legalEntityId}, ${orgId}, ${`${name} Ltd`}, ${currency})`;
     await tx`
-      insert into gl_account (id, org_id, code, name, type, normal_side) values
-        (${cashGl},    ${orgId}, '1010', 'Cash and banks', 'asset',   'D'),
-        (${revenueGl}, ${orgId}, '4010', 'Revenue',        'income',  'C'),
-        (${expenseGl}, ${orgId}, '5010', 'Operating cost', 'expense', 'D')`;
+      insert into gl_account (id, org_id, code, name, type, normal_side, role) values
+        (${cashGl},    ${orgId}, '1010', 'Cash and banks', 'asset',   'D', 'cash'),
+        (${revenueGl}, ${orgId}, '4010', 'Revenue',        'income',  'C', 'revenue'),
+        (${expenseGl}, ${orgId}, '5010', 'Operating cost', 'expense', 'D', 'expense')`;
     await tx`
       insert into account (id, org_id, legal_entity_id, name, kind, currency)
       values (${accountId}, ${orgId}, ${legalEntityId}, 'Main account', 'bank', ${currency})`;

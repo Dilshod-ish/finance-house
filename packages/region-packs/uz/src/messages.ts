@@ -104,7 +104,8 @@ const TRIPLES = {
   'gl.5500': ['Ofis xarajatlari', 'Офисные расходы', 'Office expenses'],
   'gl.5600': ['Amortizatsiya', 'Амортизация', 'Depreciation'],
   'gl.5700': ['Foiz xarajatlari', 'Процентные расходы', 'Interest expense'],
-  'gl.5900': ['Soliqlar va kurs farqi', 'Налоги и курсовая разница', 'Taxes and FX differences'],
+  'gl.5800': ['Soliq xarajatlari', 'Расходы по налогам', 'Tax expense'],
+  'gl.5900': ['Kurs farqi', 'Курсовая разница', 'FX difference'],
 
   'industry.services': ['Xizmatlar', 'Услуги', 'Services'],
 

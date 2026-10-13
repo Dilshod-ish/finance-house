@@ -4,6 +4,11 @@ import type { GlAccountSeed } from '@fincore/region-pack-contract';
  * Internal management chart of accounts (architecture §2.3) — deliberately not
  * the statutory NSBU/BHMS plan. The user never sees these codes; they see
  * articles. Classes: 1 assets, 2 liabilities, 3 equity, 4 income, 5 expenses.
+ *
+ * Every account carries a `role`. That is what lets a report place it on a
+ * balance-sheet or P&L line without naming a country's codes, and it is why no
+ * account may be left unroled: an unroled account falls out of every report
+ * silently.
  */
 export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
   // 1xxx — assets
@@ -44,7 +49,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.1090',
     type: 'asset',
     normalSide: 'D',
-    role: null,
+    role: 'money_in_transit',
     accountKind: null,
   },
   {
@@ -60,7 +65,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.1210',
     type: 'asset',
     normalSide: 'D',
-    role: null,
+    role: 'prepaid',
     accountKind: null,
   },
   {
@@ -68,7 +73,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.1300',
     type: 'asset',
     normalSide: 'D',
-    role: null,
+    role: 'inventory',
     accountKind: null,
   },
   {
@@ -76,7 +81,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.1400',
     type: 'asset',
     normalSide: 'D',
-    role: null,
+    role: 'input_vat',
     accountKind: null,
   },
   {
@@ -84,15 +89,16 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.1500',
     type: 'asset',
     normalSide: 'D',
-    role: null,
+    role: 'fixed_asset',
     accountKind: null,
   },
+  // Contra-asset: a credit balance that reduces fixed assets.
   {
     code: '1510',
     nameKey: 'gl.1510',
     type: 'asset',
     normalSide: 'C',
-    role: null,
+    role: 'accumulated_depreciation',
     accountKind: null,
   },
 
@@ -110,7 +116,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.2020',
     type: 'liability',
     normalSide: 'C',
-    role: null,
+    role: 'advance_received',
     accountKind: null,
   },
   {
@@ -126,7 +132,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.2200',
     type: 'liability',
     normalSide: 'C',
-    role: null,
+    role: 'loan',
     accountKind: null,
   },
   {
@@ -134,7 +140,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.2210',
     type: 'liability',
     normalSide: 'C',
-    role: null,
+    role: 'accrued_interest',
     accountKind: null,
   },
   {
@@ -142,7 +148,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.2300',
     type: 'liability',
     normalSide: 'C',
-    role: null,
+    role: 'output_vat',
     accountKind: null,
   },
   {
@@ -150,7 +156,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.2400',
     type: 'liability',
     normalSide: 'C',
-    role: null,
+    role: 'tax_payable',
     accountKind: null,
   },
 
@@ -160,7 +166,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.3010',
     type: 'equity',
     normalSide: 'C',
-    role: null,
+    role: 'share_capital',
     accountKind: null,
   },
   {
@@ -171,12 +177,13 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     role: 'retained_earnings',
     accountKind: null,
   },
+  // Contra-equity: dividends and owner withdrawals reduce equity.
   {
     code: '3030',
     nameKey: 'gl.3030',
     type: 'equity',
     normalSide: 'D',
-    role: null,
+    role: 'owner_draw',
     accountKind: null,
   },
 
@@ -202,7 +209,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.4900',
     type: 'income',
     normalSide: 'C',
-    role: null,
+    role: 'other_income',
     accountKind: null,
   },
 
@@ -212,7 +219,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.5010',
     type: 'expense',
     normalSide: 'D',
-    role: 'expense',
+    role: 'cost_of_sales',
     accountKind: null,
   },
   {
@@ -268,7 +275,7 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.5600',
     type: 'expense',
     normalSide: 'D',
-    role: null,
+    role: 'depreciation',
     accountKind: null,
   },
   {
@@ -276,7 +283,17 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     nameKey: 'gl.5700',
     type: 'expense',
     normalSide: 'D',
-    role: null,
+    role: 'interest_expense',
+    accountKind: null,
+  },
+  // 5800 and 5900 were one account; the P&L has separate lines for taxes and
+  // FX differences (architecture §7.2), so one account could not serve both.
+  {
+    code: '5800',
+    nameKey: 'gl.5800',
+    type: 'expense',
+    normalSide: 'D',
+    role: 'tax_expense',
     accountKind: null,
   },
   {

@@ -231,7 +231,7 @@ const SERVICES: readonly ArticleSeed[] = [
     key: 'svc.belowEbitda.tax',
     nameKey: 'article.svc.belowEbitda.tax',
     flowType: 'below_ebitda',
-    glAccountCode: '5900',
+    glAccountCode: '5800',
     parentKey: null,
     pnlLineCode: 'tax',
     vatRatePercent: null,

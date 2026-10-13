@@ -39,8 +39,9 @@ describe('migrations', () => {
   });
 
   it('rolls back and re-applies (reversible)', async () => {
-    const rolledBack = await migrateDown({ url: h.url, steps: 3 });
+    const rolledBack = await migrateDown({ url: h.url, steps: 4 });
     expect(rolledBack).toEqual([
+      '0003_gl_account_role.down.sql',
       '0002_reversal_in_locked_period.down.sql',
       '0001_invariants.down.sql',
       '0000_init.down.sql',

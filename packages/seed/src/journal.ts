@@ -8,6 +8,8 @@ import { createRng, intBetween, pick } from './rng.js';
 
 export interface SeededJournal {
   readonly entryCount: number;
+  /** One per legal entity, dated the first day of the window. */
+  readonly openingEntryIds: readonly string[];
   readonly reversedEntryId: string;
   readonly reversalEntryId: string;
   readonly fxRevaluationEntryId: string;
@@ -66,6 +68,8 @@ export async function seedJournal(
   const glPayable = glCodeForRole(pack, 'payable');
   const glPayroll = glCodeForRole(pack, 'payroll_payable');
   const glFxDifference = glCodeForRole(pack, 'fx_difference');
+  const glShareCapital = glCodeForRole(pack, 'share_capital');
+  const glRetained = glCodeForRole(pack, 'retained_earnings');
 
   const gl = (code: string): string => {
     const id = reference.glIdByCode.get(code);
@@ -106,6 +110,77 @@ export async function seedJournal(
     lines,
     postedBy: null,
   });
+
+  // ---- Opening balances (kind='opening') --------------------------------
+  // Without these the balance sheet has no equity at all: every asset would
+  // have to have arrived from revenue, which is only true of a business that
+  // started with nothing. Dated the first day of the window, which is how an
+  // owner states it ("as of 1 January we had ...").
+  const openingEntryIds: string[] = [];
+  const openingRate = rateOn(window, window.from);
+
+  const companyOpeningLocal = money(240_000_000 * 10_000, localCurrency);
+  const companyOpeningForeign = money(18_000 * 10_000, foreign);
+  const companyOpeningForeignFunctional = companyOpeningForeign
+    .convert(openingRate, localCurrency)
+    .round();
+  const companyCapital = money(100_000_000 * 10_000, localCurrency);
+  const companyRetained = companyOpeningLocal
+    .plus(companyOpeningForeignFunctional)
+    .minus(companyCapital);
+
+  openingEntryIds.push(
+    await post(
+      entry(
+        reference.companyEntityId,
+        window.from,
+        'opening',
+        'opening_balance',
+        [
+          {
+            glAccountId: gl(glCash),
+            side: 'D',
+            amount: companyOpeningLocal,
+            accountId: reference.accounts.companyBankLocal,
+          },
+          {
+            glAccountId: gl(glCash),
+            side: 'D',
+            amount: companyOpeningForeign,
+            fxRate: openingRate.toFixed(10),
+            accountId: reference.accounts.companyBankForeign,
+          },
+          { glAccountId: gl(glShareCapital), side: 'C', amount: companyCapital },
+          { glAccountId: gl(glRetained), side: 'C', amount: companyRetained },
+        ],
+        null,
+        `Opening balance at ${window.from}`,
+      ),
+    ),
+  );
+
+  const traderOpening = money(35_000_000 * 10_000, localCurrency);
+  openingEntryIds.push(
+    await post(
+      entry(
+        reference.soleTraderEntityId,
+        window.from,
+        'opening',
+        'opening_balance',
+        [
+          {
+            glAccountId: gl(glCash),
+            side: 'D',
+            amount: traderOpening,
+            accountId: reference.accounts.soleTraderBank,
+          },
+          { glAccountId: gl(glShareCapital), side: 'C', amount: traderOpening },
+        ],
+        null,
+        `Opening balance at ${window.from}`,
+      ),
+    ),
+  );
 
   const days = businessDays(window);
   const perMonth = new Map<string, IsoDate[]>();
@@ -460,6 +535,7 @@ export async function seedJournal(
 
   return {
     entryCount,
+    openingEntryIds,
     reversedEntryId,
     reversalEntryId: reversal.value.id,
     fxRevaluationEntryId,

@@ -38,6 +38,8 @@ export interface ReferenceData {
   readonly soleTraderEntityId: string;
   /** gl_account.code -> gl_account.id, for this organization. */
   readonly glIdByCode: ReadonlyMap<string, string>;
+  /** gl_account.role -> gl_account.id, first account carrying that role. */
+  readonly glIdByRole: ReadonlyMap<string, string>;
   readonly accounts: {
     readonly companyBankLocal: string;
     readonly companyBankForeign: string;
@@ -195,12 +197,20 @@ export async function seedReference(
       name: pack.messages[pack.locale.defaultLanguage][seed.nameKey] ?? seed.nameKey,
       type: seed.type,
       normalSide: seed.normalSide,
+      role: seed.role,
     }));
     const insertedGl = await tx
       .insert(glAccount)
       .values(glRows)
       .returning({ id: glAccount.id, code: glAccount.code });
     const glIdByCode = new Map(insertedGl.map((row) => [row.code, row.id]));
+    const glIdByRole = new Map<string, string>();
+    for (const seed of pack.chartOfAccountsTemplate) {
+      const id = glIdByCode.get(seed.code);
+      if (id !== undefined && !glIdByRole.has(seed.role)) {
+        glIdByRole.set(seed.role, id);
+      }
+    }
 
     const insertedDirections = await tx
       .insert(direction)
@@ -260,6 +270,7 @@ export async function seedReference(
       companyEntityId,
       soleTraderEntityId,
       glIdByCode,
+      glIdByRole,
       accounts: {
         companyBankLocal: insertedAccounts[0]?.id ?? '',
         companyBankForeign: insertedAccounts[1]?.id ?? '',

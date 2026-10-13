@@ -84,6 +84,7 @@ describe('schema', () => {
       'journal_line_org_counterparty_idx',
       'journal_line_org_source_idx',
       'fx_rate_org_pair_date_idx',
+      'gl_account_org_role_idx',
     ]) {
       expect([expected, names.has(expected)]).toEqual([expected, true]);
     }

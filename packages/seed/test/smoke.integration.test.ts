@@ -213,6 +213,81 @@ describe('smoke — cash per the ledger equals the sum of account balances', () 
   });
 });
 
+describe('smoke — the balance sheet equation holds (A)', () => {
+  it('gives the organization real equity, from opening balances', async () => {
+    const rows = await h.asOrg(
+      seeded.reference.orgId,
+      (tx) => tx<{ role: string; normal: string }[]>`
+        select g.role,
+               sum(case when g.type in ('asset','expense')
+                        then (case when l.side='D' then l.amount_functional
+                                   else -l.amount_functional end)
+                        else (case when l.side='C' then l.amount_functional
+                                   else -l.amount_functional end) end) as normal
+          from journal_line l join gl_account g on g.id = l.gl_account_id
+         where g.role in ('share_capital','retained_earnings')
+         group by g.role order by g.role`,
+    );
+    expect(rows).toHaveLength(2);
+    for (const row of rows) {
+      expect([row.role, Money.of(row.normal, LOCAL).isPositive()]).toEqual([row.role, true]);
+    }
+  });
+
+  it('ties assets against liabilities, equity and the period result', async () => {
+    const rows = await h.asOrg(
+      seeded.reference.orgId,
+      (tx) => tx<Record<string, string>[]>`
+        with t as (
+          select g.type,
+                 sum(case when l.side='D' then l.amount_functional
+                          else -l.amount_functional end) as dr_net
+            from journal_line l join gl_account g on g.id = l.gl_account_id
+           group by g.type
+        )
+        select coalesce((select dr_net  from t where type='asset'), 0)     as assets,
+               coalesce(-(select dr_net from t where type='liability'), 0) as liabilities,
+               coalesce(-(select dr_net from t where type='equity'), 0)    as equity,
+               coalesce(-(select dr_net from t where type='income'), 0)    as income,
+               coalesce((select dr_net  from t where type='expense'), 0)   as expense`,
+    );
+    const r = rows[0];
+    expect(r).toBeDefined();
+    if (r === undefined) return;
+
+    const assets = Money.of(r['assets'] ?? '0', LOCAL);
+    const liabilities = Money.of(r['liabilities'] ?? '0', LOCAL);
+    const equity = Money.of(r['equity'] ?? '0', LOCAL);
+    const result = Money.of(r['income'] ?? '0', LOCAL).minus(Money.of(r['expense'] ?? '0', LOCAL));
+
+    // Assets = Liabilities + Equity + result for the period. No plug.
+    expect(assets.toStorage()).toBe(liabilities.plus(equity).plus(result).toStorage());
+    expect(assets.isPositive()).toBe(true);
+    expect(equity.isPositive()).toBe(true);
+  });
+
+  it('places every account on a role, so none can fall out of a report', async () => {
+    const rows = await h.asOrg(
+      seeded.reference.orgId,
+      (tx) => tx<{ n: number }[]>`
+        select count(*)::int as n from gl_account where role is null`,
+    );
+    expect(rows[0]).toEqual({ n: 0 });
+  });
+
+  it('opens each legal entity with exactly one opening entry', async () => {
+    expect(seeded.journal.openingEntryIds).toHaveLength(2);
+    const rows = await h.asOrg(
+      seeded.reference.orgId,
+      (tx) => tx<{ n: number; d: string }[]>`
+        select count(*)::int as n, min(accrual_date)::text as d
+          from journal_entry where kind = 'opening'`,
+    );
+    expect(rows[0]?.n).toBe(2);
+    expect(rows[0]?.d).toBe('2026-01-01');
+  });
+});
+
 describe('smoke — RLS blocks cross-org reads', () => {
   it('shows the neighbour tenant nothing of the demo organization', async () => {
     const demoOrgId = seeded.reference.orgId;

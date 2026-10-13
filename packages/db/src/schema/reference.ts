@@ -16,11 +16,13 @@ import {
   ACCOUNT_KINDS,
   COUNTERPARTY_KINDS,
   FLOW_TYPES,
+  GL_ACCOUNT_ROLES,
   GL_ACCOUNT_TYPES,
   SIDES,
   inList,
   type AccountKind,
   type FlowType,
+  type GlAccountRole,
   type GlAccountType,
   type Side,
 } from '@fincore/shared';
@@ -70,6 +72,13 @@ export const glAccount = pgTable(
     name: text('name').notNull(),
     type: text('type').$type<GlAccountType>().notNull(),
     normalSide: text('normal_side').$type<Side>().notNull(),
+    /**
+     * What a report resolves this account by — `cash`, `receivable`, `loan`,
+     * `retained_earnings` and so on. Stored here rather than looked up in the
+     * region pack at read time because the organization's own accounts need
+     * roles too, and a pack template cannot know about them (ADR-0005).
+     */
+    role: text('role').$type<GlAccountRole>().notNull(),
     isActive: boolean('is_active').notNull().default(true),
     createdAt: createdAt(),
   },
@@ -78,6 +87,9 @@ export const glAccount = pgTable(
     unique('gl_account_id_org_uq').on(t.id, t.orgId),
     check('gl_account_type_ck', sql.raw(`type in (${inList(GL_ACCOUNT_TYPES)})`)),
     check('gl_account_normal_side_ck', sql.raw(`normal_side in (${inList(SIDES)})`)),
+    check('gl_account_role_ck', sql.raw(`role in (${inList(GL_ACCOUNT_ROLES)})`)),
+    // §5.3: every balance-sheet and P&L grouping starts from (org, role).
+    index('gl_account_org_role_idx').on(t.orgId, t.role),
   ],
 );
 
