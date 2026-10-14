@@ -184,8 +184,14 @@ see and your recommendation. Do not send a list of ten questions.
 
 **Respond in Uzbek (Latin script).** This is a hard requirement, not a
 preference — do not switch to English even when the code, commit messages and
-documents around you are in English. Code identifiers, commit messages, code
-comments and ADRs stay in English; the conversation is in Uzbek.
+documents around you are in English. Code identifiers, commit messages and code
+comments stay in English; the conversation is in Uzbek.
+
+**ADRs in `docs/adr/` are written in Uzbek (Latin script)**, filename slug
+included. They are decision records for this team, not API documentation, and
+the team reads Uzbek. Identifiers, column names, SQL, code blocks and quoted
+invariant names (`I1`, `journal_line`, `article.flow_type`) stay as they are —
+only the prose is Uzbek.
 
 Be concise. When you finish a task, report: what changed, what you verified
 (with the actual command output), and what you deliberately did not do. Do not
