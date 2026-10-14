@@ -13,10 +13,10 @@ import { queryRoleBalances, type BalanceSheetQuery } from './balance-sheet/query
 import { buildPnl, type PnlGrouping, type PnlReport } from './pnl/build.js';
 import {
   queryEquityMovement,
-  queryPnlDrilldown,
+  queryLedgerLines,
   queryPnlFacts,
-  type PnlDrilldownLine,
-  type PnlDrilldownQuery,
+  type LedgerLine,
+  type LedgerLineQuery,
   type PnlPeriod,
   type PnlScope,
 } from './pnl/query.js';
@@ -53,8 +53,8 @@ export interface Reports {
    */
   getBalanceSheet(query: BalanceSheetQuery): Promise<BalanceSheetReport[]>;
   getPnl(query: PnlQuery): Promise<PnlReport[]>;
-  /** The lines behind one P&L figure, with their source markers (I3). */
-  getPnlDrilldown(query: PnlDrilldownQuery): Promise<readonly PnlDrilldownLine[]>;
+  /** The lines behind one report figure, with their source markers (I3). */
+  getLedgerLines(query: LedgerLineQuery): Promise<readonly LedgerLine[]>;
   /**
    * Checks net profit against the movement in equity. This is the mechanism
    * that proves the reports agree with the ledger; a non-zero residual is a
@@ -131,8 +131,8 @@ export function createReports(db: Database): Reports {
       );
     },
 
-    getPnlDrilldown(query) {
-      return queryPnlDrilldown(db, query);
+    getLedgerLines(query) {
+      return queryLedgerLines(db, query);
     },
 
     async reconcilePnl(scope) {
@@ -184,15 +184,17 @@ export type {
   PnlReport,
   PnlRow,
 } from './pnl/build.js';
-export { queryEquityMovement, queryPnlDrilldown, queryPnlFacts } from './pnl/query.js';
+export { queryEquityMovement, queryLedgerLines, queryPnlFacts } from './pnl/query.js';
 export type {
   EquityMovement,
-  PnlDrilldownLine,
-  PnlDrilldownQuery,
+  LedgerLine,
+  LedgerLineQuery,
   PnlFactSet,
   PnlPeriod,
   PnlScope,
 } from './pnl/query.js';
 export * from './pnl/structure.js';
+
+export { rolesForLine, type RoleSource } from './structure-roles.js';
 
 export { REPORT_MESSAGES, REPORT_MESSAGE_KEYS, type ReportMessageKey } from './messages.js';

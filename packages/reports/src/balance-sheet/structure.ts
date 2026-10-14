@@ -1,4 +1,5 @@
 import type { GlAccountRole } from '@fincore/shared';
+import { rolesForLine } from '../structure-roles.js';
 
 /**
  * The balance sheet's shape, declared as data in one place so the whole
@@ -174,3 +175,22 @@ export const TOTAL_ASSETS_CODE = 'assets';
 export const TOTAL_LIABILITIES_AND_EQUITY_CODE = 'liabilitiesAndEquity';
 export const TOTAL_LIABILITIES_CODE = 'liabilities';
 export const TOTAL_EQUITY_CODE = 'equity';
+
+/** The roles behind one balance-sheet line — see `rolesForLine`. */
+export function rolesForBalanceSheetLine(code: string): readonly GlAccountRole[] {
+  return rolesForLine(
+    code,
+    BALANCE_SHEET,
+    (spec) => {
+      switch (spec.kind) {
+        case 'roles':
+          return { roles: spec.roles, components: [] };
+        case 'period_result':
+          return { roles: [...RESULT_INCOME_ROLES, ...RESULT_EXPENSE_ROLES], components: [] };
+        case 'subtotal':
+          return { roles: [], components: spec.components };
+      }
+    },
+    (at) => `Not a balance-sheet line: ${at}`,
+  );
+}

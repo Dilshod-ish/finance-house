@@ -1,0 +1,42 @@
+{
+  "name": "@fincore/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "HTTP layer. Validates input, resolves tenant, delegates to the domain packages. Computes nothing.",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "start": "node dist/main.js",
+    "dev": "node --watch dist/main.js"
+  },
+  "devDependencies": {
+    "@fincore/eslint-config": "workspace:*",
+    "@fincore/tsconfig": "workspace:*",
+    "@fincore/seed": "workspace:*",
+    "@testcontainers/postgresql": "12.1.0",
+    "testcontainers": "12.1.0",
+    "eslint": "10.9.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11",
+    "supertest": "7.1.4",
+    "@types/supertest": "6.0.3"
+  },
+  "dependencies": {
+    "@fincore/db": "workspace:*",
+    "@fincore/reports": "workspace:*",
+    "@fincore/shared": "workspace:*",
+    "@nestjs/common": "11.1.6",
+    "@nestjs/core": "11.1.6",
+    "@nestjs/platform-express": "11.1.6",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "zod": "4.1.12",
+    "drizzle-orm": "0.45.2"
+  }
+}

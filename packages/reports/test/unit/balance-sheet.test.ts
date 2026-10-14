@@ -6,6 +6,7 @@ import {
   RESULT_EXPENSE_ROLES,
   RESULT_INCOME_ROLES,
   buildBalanceSheet,
+  rolesForBalanceSheetLine,
   type BalanceSheetLineSpec,
   type RoleBalances,
 } from '../../src/index.js';
@@ -231,5 +232,33 @@ describe('buildBalanceSheet', () => {
       },
     ];
     expect(() => build(balances({}), structure)).toThrow(/cycle at: assets/);
+  });
+});
+
+describe('rolesForBalanceSheetLine', () => {
+  it('gives a detail line exactly the roles it claims', () => {
+    expect([...rolesForBalanceSheetLine('assets.current.cash')].sort()).toEqual(
+      [...(BALANCE_SHEET.find((s) => s.code === 'assets.current.cash')?.roles ?? [])].sort(),
+    );
+  });
+
+  it('unions the roles of a subtotal through its components', () => {
+    const assets = [...rolesForBalanceSheetLine('assets')].sort();
+    const claimed = BALANCE_SHEET.filter((s) => s.side === 'assets' && s.kind === 'roles').flatMap(
+      (s) => s.roles,
+    );
+    expect(assets).toEqual([...new Set(claimed)].sort());
+  });
+
+  it('expands the period result into every income and expense role it derives from', () => {
+    const result = BALANCE_SHEET.find((s) => s.kind === 'period_result');
+    if (result === undefined) throw new Error('no period_result line');
+    expect([...rolesForBalanceSheetLine(result.code)].sort()).toEqual(
+      [...new Set([...RESULT_INCOME_ROLES, ...RESULT_EXPENSE_ROLES])].sort(),
+    );
+  });
+
+  it('refuses a code that is not a line, rather than returning nothing', () => {
+    expect(() => rolesForBalanceSheetLine('nope')).toThrow(/Not a balance-sheet line: nope/);
   });
 });

@@ -21,7 +21,9 @@
     "db:reset": "pnpm --filter @fincore/db db:reset && pnpm --filter @fincore/seed db:seed",
     "db:generate": "pnpm --filter @fincore/db db:generate",
     "infra:up": "docker compose -f docker/docker-compose.yml up -d",
-    "infra:down": "docker compose -f docker/docker-compose.yml down"
+    "infra:down": "docker compose -f docker/docker-compose.yml down",
+    "api": "pnpm --filter @fincore/api start",
+    "api:dev": "pnpm --filter @fincore/api dev"
   },
   "devDependencies": {
     "@fincore/eslint-config": "workspace:*",

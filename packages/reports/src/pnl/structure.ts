@@ -1,4 +1,5 @@
 import type { FlowType, GlAccountRole } from '@fincore/shared';
+import { rolesForLine } from '../structure-roles.js';
 
 /**
  * The P&L, declared as data (architecture §7.2). Fixed structure: revenue,
@@ -149,3 +150,23 @@ export const PNL_ROLES: readonly GlAccountRole[] = [
   'other_income',
   'owner_draw',
 ];
+
+/** The roles behind one P&L line — see `rolesForLine`. */
+export function rolesForPnlLine(code: string): readonly GlAccountRole[] {
+  return rolesForLine(
+    code,
+    PNL,
+    (spec) => {
+      switch (spec.kind) {
+        case 'value':
+          return { roles: spec.roles, components: [] };
+        case 'subtotal':
+          return { roles: [], components: spec.components.map((part) => part.code) };
+        case 'margin':
+          // A percentage has no ledger lines of its own; drill into its parts.
+          return { roles: [], components: [spec.numerator, spec.denominator] };
+      }
+    },
+    (at) => `Not a P&L line: ${at}`,
+  );
+}

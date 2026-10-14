@@ -232,7 +232,15 @@ export async function queryEquityMovement(
   });
 }
 
-export interface PnlDrilldownQuery extends PnlScope {
+export interface LedgerLineQuery {
+  readonly orgId: string;
+  readonly legalEntityIds?: readonly string[];
+  /**
+   * Lower bound on `accrual_date`. Omit it for a cumulative figure: a balance
+   * sheet line is every entry up to `to`, not a period's worth.
+   */
+  readonly from?: IsoDate;
+  readonly to: IsoDate;
   /** The roles the clicked line sums — from the structure, not from the UI. */
   readonly roles: readonly GlAccountRole[];
   readonly articleId?: string | null;
@@ -240,7 +248,7 @@ export interface PnlDrilldownQuery extends PnlScope {
   readonly limit?: number;
 }
 
-export interface PnlDrilldownLine {
+export interface LedgerLine {
   readonly entryId: string;
   readonly accrualDate: IsoDate;
   readonly cashDate: IsoDate | null;
@@ -258,23 +266,25 @@ export interface PnlDrilldownLine {
 }
 
 /**
- * The lines behind one P&L figure. I3 requires every number to reach its source
- * document in at most three clicks; this is the first of those clicks, so
- * `source_type` and `source_id` come back on every row.
+ * The lines behind one report figure. I3 requires every number to reach its
+ * source document in at most three clicks; this is the first of those clicks,
+ * so `source_type` and `source_id` come back on every row.
  */
-export async function queryPnlDrilldown(
+export async function queryLedgerLines(
   db: Database,
-  query: PnlDrilldownQuery,
-): Promise<readonly PnlDrilldownLine[]> {
+  query: LedgerLineQuery,
+): Promise<readonly LedgerLine[]> {
   return db.transaction(async (tx) => {
     await tx.execute(sql`select set_config('app.org_id', ${query.orgId}, true)`);
 
     const conditions = [
       eq(journalLine.orgId, query.orgId),
-      gte(journalEntry.accrualDate, query.from),
       lte(journalEntry.accrualDate, query.to),
       inArray(glAccount.role, [...query.roles]),
     ];
+    if (query.from !== undefined) {
+      conditions.push(gte(journalEntry.accrualDate, query.from));
+    }
     if (query.legalEntityIds !== undefined) {
       conditions.push(inArray(journalEntry.legalEntityId, [...query.legalEntityIds]));
     }

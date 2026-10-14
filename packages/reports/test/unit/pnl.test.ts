@@ -14,6 +14,7 @@ import {
   buildPnl,
   matches,
   priorPeriod,
+  rolesForPnlLine,
   type PnlFact,
   type PnlLineSpec,
   type PnlReport,
@@ -444,6 +445,32 @@ describe('buildPnl', () => {
       },
     ];
     expect(() => build([], {}, [], structure)).toThrow(/cycle at: a/);
+  });
+});
+
+describe('rolesForPnlLine', () => {
+  it('gives a value line exactly the roles it claims', () => {
+    expect(rolesForPnlLine('revenue')).toEqual(['revenue']);
+    expect(rolesForPnlLine('cogs')).toEqual(['cost_of_sales']);
+  });
+
+  it('unions the roles of a subtotal through its components', () => {
+    expect([...rolesForPnlLine('grossProfit')].sort()).toEqual(['cost_of_sales', 'revenue']);
+  });
+
+  it('reaches every P&L role from net profit, so no line is unreachable', () => {
+    const fromNetProfit = [...rolesForPnlLine('netProfit')].sort();
+    const claimed = PNL.filter((s) => s.kind === 'value').flatMap((s) => s.roles);
+    // Net profit sits above dividends, so owner draws are the one exception.
+    expect(fromNetProfit).toEqual([...new Set(claimed)].sort().filter((r) => r !== 'owner_draw'));
+  });
+
+  it('drills a margin into its numerator and denominator', () => {
+    expect([...rolesForPnlLine('grossMargin')].sort()).toEqual(['cost_of_sales', 'revenue']);
+  });
+
+  it('refuses a code that is not a line, rather than returning nothing', () => {
+    expect(() => rolesForPnlLine('nope')).toThrow(/Not a P&L line: nope/);
   });
 });
 

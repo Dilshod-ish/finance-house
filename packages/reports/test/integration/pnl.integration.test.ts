@@ -9,6 +9,7 @@ import {
   BALANCE_SHEET,
   PNL,
   PNL_ROLES,
+  rolesForBalanceSheetLine,
   REPORT_MESSAGES,
   REPORT_MESSAGE_KEYS,
   createReports,
@@ -283,9 +284,24 @@ describe('reconcilePnl — net profit against the movement in equity', () => {
   });
 });
 
-describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
+describe('getLedgerLines — the first of the three clicks (I3)', () => {
+  it('has no lower bound when `from` is omitted, as a balance-sheet line needs', async () => {
+    const roles = rolesForBalanceSheetLine('equity');
+    const cutoff = isoDate('2026-02-01');
+    const scope = { orgId: seeded.reference.orgId, to: isoDate('2026-02-15'), roles, limit: 2000 };
+
+    const cumulative = await reports.getLedgerLines(scope);
+    const inPeriod = await reports.getLedgerLines({ ...scope, from: cutoff });
+
+    // The seed's opening balances sit on the ledger's first day, before the
+    // cutoff. A balance-sheet figure must see them; a P&L period must not.
+    expect(cumulative.length).toBeGreaterThan(inPeriod.length);
+    expect(cumulative.some((line) => line.accrualDate < cutoff)).toBe(true);
+    expect(inPeriod.every((line) => line.accrualDate >= cutoff)).toBe(true);
+  });
+
   it('returns the lines behind a figure, each with its source marker', async () => {
-    const lines = await reports.getPnlDrilldown({
+    const lines = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       from: FROM,
       to: TO,
@@ -304,7 +320,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
 
   it('adds up to the figure it was opened from', async () => {
     const [report] = await reports.getPnl({ orgId: seeded.reference.orgId, from: FROM, to: TO });
-    const lines = await reports.getPnlDrilldown({
+    const lines = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       from: FROM,
       to: TO,
@@ -329,7 +345,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
     const cell = row(grouped!, 'revenue').breakdown[0];
     expect(cell?.articleId).not.toBeNull();
 
-    const lines = await reports.getPnlDrilldown({
+    const lines = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       from: FROM,
       to: TO,
@@ -340,7 +356,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
     const summed = lines.reduce((acc, line) => acc.plus(line.amountFunctional), Money.zero(UZS));
     expect(summed.toStorage()).toBe(cell?.amount.toStorage());
 
-    const byDirection = await reports.getPnlDrilldown({
+    const byDirection = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       from: FROM,
       to: TO,
@@ -351,7 +367,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
     expect(byDirection.length).toBeGreaterThan(0);
     expect(byDirection.length).toBeLessThan(
       (
-        await reports.getPnlDrilldown({
+        await reports.getLedgerLines({
           orgId: seeded.reference.orgId,
           from: FROM,
           to: TO,
@@ -363,7 +379,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
   });
 
   it('respects the row limit and the legal-entity scope', async () => {
-    const capped = await reports.getPnlDrilldown({
+    const capped = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       from: FROM,
       to: TO,
@@ -372,7 +388,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
     });
     expect(capped).toHaveLength(5);
 
-    const perEntity = await reports.getPnlDrilldown({
+    const perEntity = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       legalEntityIds: [seeded.reference.soleTraderEntityId],
       from: FROM,
@@ -385,7 +401,7 @@ describe('getPnlDrilldown — the first of the three clicks (I3)', () => {
   });
 
   it('shows the FX revaluation with its own source marker', async () => {
-    const lines = await reports.getPnlDrilldown({
+    const lines = await reports.getLedgerLines({
       orgId: seeded.reference.orgId,
       from: FROM,
       to: TO,
