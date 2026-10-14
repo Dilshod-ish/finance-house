@@ -169,21 +169,13 @@ export function createReports(db: Database): Reports {
   };
 }
 
-export { buildBalanceSheet } from './balance-sheet/build.js';
-export type { BalanceSheetLine, BalanceSheetReport, RoleBalances } from './balance-sheet/build.js';
+// The structures, builders and labels — everything with no database behind it.
+export * from './structure.js';
+
+// The query layer. These touch `@fincore/db`, so a browser bundle must import
+// `@fincore/reports/structure` instead of this entry point.
 export { queryRoleBalances } from './balance-sheet/query.js';
 export type { BalanceSheetQuery, RoleBalanceSet } from './balance-sheet/query.js';
-export * from './balance-sheet/structure.js';
-
-export { buildPnl, matches } from './pnl/build.js';
-export type {
-  BuildPnlOptions,
-  PnlBreakdownRow,
-  PnlFact,
-  PnlGrouping,
-  PnlReport,
-  PnlRow,
-} from './pnl/build.js';
 export { queryEquityMovement, queryLedgerLines, queryPnlFacts } from './pnl/query.js';
 export type {
   EquityMovement,
@@ -193,8 +185,3 @@ export type {
   PnlPeriod,
   PnlScope,
 } from './pnl/query.js';
-export * from './pnl/structure.js';
-
-export { rolesForLine, type RoleSource } from './structure-roles.js';
-
-export { REPORT_MESSAGES, REPORT_MESSAGE_KEYS, type ReportMessageKey } from './messages.js';

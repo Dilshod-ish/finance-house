@@ -1,0 +1,262 @@
+/* Components of the design system. Imported once, by the app shell. */
+
+/* ---- Amount ------------------------------------------------------------- */
+
+.fc-amount {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  white-space: nowrap;
+}
+.fc-amount--danger {
+  color: var(--fc-danger);
+}
+.fc-amount--success {
+  color: var(--fc-success);
+}
+.fc-amount--muted {
+  color: var(--fc-text-muted);
+}
+
+/* ---- Report table ------------------------------------------------------- */
+
+.fc-table-scroll {
+  overflow: auto;
+  border: var(--fc-border-width) solid var(--fc-border);
+  border-radius: var(--fc-radius-card);
+  background: var(--fc-bg-raised);
+  max-height: calc(100vh - 220px);
+}
+
+.fc-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: var(--fc-text-table);
+}
+
+.fc-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--fc-bg-raised);
+  border-bottom: var(--fc-border-width) solid var(--fc-border-strong);
+  padding: var(--fc-space-2) var(--fc-space-3);
+  font-weight: 500;
+  color: var(--fc-text-secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* The label column stays put when the period columns scroll sideways. */
+.fc-table thead th:first-child,
+.fc-table tbody th {
+  position: sticky;
+  left: 0;
+  text-align: left;
+  background: var(--fc-bg-raised);
+}
+.fc-table thead th:first-child {
+  z-index: 3;
+}
+.fc-table tbody th {
+  z-index: 1;
+  font-weight: inherit;
+}
+
+.fc-table td,
+.fc-table th {
+  padding: var(--fc-space-2) var(--fc-space-3);
+  border-bottom: var(--fc-border-width) solid var(--fc-border);
+}
+
+.fc-table td {
+  text-align: right;
+}
+
+/* A total is set apart by weight and background, and is never painted. */
+.fc-row--total > th,
+.fc-row--total > td {
+  background: var(--fc-bg-total);
+  font-weight: 500;
+}
+.fc-row--section > th,
+.fc-row--section > td {
+  background: var(--fc-bg-total);
+  font-weight: 500;
+  font-size: var(--fc-text-body);
+}
+.fc-row--derived > th,
+.fc-row--derived > td {
+  color: var(--fc-text-secondary);
+  font-size: var(--fc-text-aux);
+}
+
+.fc-indent-1 {
+  padding-left: var(--fc-space-6);
+}
+.fc-indent-2 {
+  padding-left: var(--fc-space-8);
+}
+
+/* Every figure is clickable — if a number shows and cannot be opened, that is
+ * a design error (design system §7.2). */
+.fc-cell-button {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+}
+.fc-cell-button:hover,
+.fc-cell-button:focus-visible {
+  text-decoration-color: var(--fc-accent);
+  color: var(--fc-accent);
+}
+.fc-cell-button:focus-visible {
+  outline: 2px solid var(--fc-accent);
+  outline-offset: 2px;
+  border-radius: var(--fc-space-1);
+}
+
+.fc-breakdown > th {
+  padding-left: var(--fc-space-8);
+  color: var(--fc-text-secondary);
+  font-size: var(--fc-text-aux);
+}
+
+/* ---- States ------------------------------------------------------------- */
+
+.fc-state {
+  border: var(--fc-border-width) solid var(--fc-border);
+  border-radius: var(--fc-radius-card);
+  background: var(--fc-bg-raised);
+  padding: var(--fc-space-8);
+  text-align: center;
+}
+.fc-state__title {
+  font-size: var(--fc-text-heading);
+  font-weight: 500;
+  margin: 0 0 var(--fc-space-2);
+}
+.fc-state__body {
+  margin: 0 auto;
+  max-width: 46ch;
+  color: var(--fc-text-secondary);
+}
+
+/* A skeleton, not a spinner: the figure's space is reserved so the layout
+ * cannot jump when the number arrives (design system §11). */
+.fc-skeleton {
+  display: block;
+  height: 1em;
+  border-radius: var(--fc-space-1);
+  background: linear-gradient(
+    90deg,
+    var(--fc-bg-sunken) 25%,
+    var(--fc-bg-total) 37%,
+    var(--fc-bg-sunken) 63%
+  );
+  background-size: 400% 100%;
+  animation: fc-skeleton 1.4s ease infinite;
+}
+@keyframes fc-skeleton {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-skeleton {
+    animation: none;
+  }
+}
+
+.fc-notice {
+  display: flex;
+  gap: var(--fc-space-3);
+  align-items: flex-start;
+  border: var(--fc-border-width) solid var(--fc-border);
+  border-left: 3px solid var(--fc-warning);
+  border-radius: var(--fc-radius-control);
+  background: var(--fc-bg-raised);
+  padding: var(--fc-space-3) var(--fc-space-4);
+  font-size: var(--fc-text-aux);
+}
+.fc-notice--danger {
+  border-left-color: var(--fc-danger);
+}
+.fc-notice--success {
+  border-left-color: var(--fc-success);
+}
+
+/* ---- Drill-down panel --------------------------------------------------- */
+
+/* A panel, not a modal: the report must stay visible behind it, or the reader
+ * loses the context they clicked from (design system §9). */
+.fc-panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(760px, 100vw);
+  background: var(--fc-bg-raised);
+  border-left: var(--fc-border-width) solid var(--fc-border-strong);
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+}
+.fc-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fc-space-4);
+  padding: var(--fc-space-4);
+  border-bottom: var(--fc-border-width) solid var(--fc-border);
+}
+.fc-panel__body {
+  overflow: auto;
+  padding: 0 var(--fc-space-4) var(--fc-space-4);
+}
+
+/* ---- Controls ----------------------------------------------------------- */
+
+.fc-control {
+  font: inherit;
+  font-size: var(--fc-text-aux);
+  color: var(--fc-text-primary);
+  background: var(--fc-bg-raised);
+  border: var(--fc-border-width) solid var(--fc-border-strong);
+  border-radius: var(--fc-radius-control);
+  padding: var(--fc-space-2) var(--fc-space-3);
+}
+.fc-control:focus-visible {
+  outline: 2px solid var(--fc-accent);
+  outline-offset: 1px;
+}
+.fc-field {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--fc-space-1);
+}
+.fc-field > span {
+  font-size: var(--fc-text-note);
+  color: var(--fc-text-muted);
+}
+.fc-button {
+  font: inherit;
+  font-size: var(--fc-text-aux);
+  cursor: pointer;
+  border-radius: var(--fc-radius-control);
+  border: var(--fc-border-width) solid var(--fc-border-strong);
+  background: var(--fc-bg-raised);
+  color: var(--fc-text-primary);
+  padding: var(--fc-space-2) var(--fc-space-4);
+}
+.fc-button--accent {
+  background: var(--fc-accent);
+  border-color: var(--fc-accent);
+  color: #fff;
+}

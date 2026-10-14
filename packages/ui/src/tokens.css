@@ -1,0 +1,118 @@
+/*
+ * Design system §8. Three text levels and four semantic colours — no more.
+ * Colour carries meaning or nothing, so there is no "primary blue" for
+ * decoration and no palette of greys beyond the hierarchy below.
+ *
+ * Categorical colours (directions, articles on a chart) come from a separate
+ * scale and are never mixed with the semantic ones.
+ */
+:root {
+  --fc-bg: #ffffff;
+  --fc-bg-raised: #ffffff;
+  --fc-bg-sunken: #f7f7f8;
+  --fc-bg-total: #f2f2f4;
+
+  --fc-text-primary: #16181d;
+  --fc-text-secondary: #4a4e58;
+  --fc-text-muted: #878d9a;
+
+  --fc-danger: #b4232c;
+  --fc-warning: #8a5a00;
+  --fc-success: #1d6b3f;
+  --fc-accent: #1f4fd8;
+
+  --fc-border: #dcdee3;
+  --fc-border-strong: #c2c6ce;
+
+  /* 4px grid. */
+  --fc-space-1: 4px;
+  --fc-space-2: 8px;
+  --fc-space-3: 12px;
+  --fc-space-4: 16px;
+  --fc-space-6: 24px;
+  --fc-space-8: 32px;
+
+  --fc-radius-control: 8px;
+  --fc-radius-card: 12px;
+  --fc-border-width: 0.5px;
+
+  /* 24 primary figure / 18 heading / 16 body / 14 table / 13 aux / 12 note. */
+  --fc-text-figure: 24px;
+  --fc-text-heading: 18px;
+  --fc-text-body: 16px;
+  --fc-text-table: 14px;
+  --fc-text-aux: 13px;
+  --fc-text-note: 12px;
+
+  --fc-font:
+    'Inter', 'Inter var', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --fc-font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --fc-bg: #101216;
+    --fc-bg-raised: #171a1f;
+    --fc-bg-sunken: #0b0d10;
+    --fc-bg-total: #1d2127;
+
+    --fc-text-primary: #eef0f4;
+    --fc-text-secondary: #b3b9c4;
+    --fc-text-muted: #7e8695;
+
+    --fc-danger: #ff6b6b;
+    --fc-warning: #e0a53a;
+    --fc-success: #4fc07c;
+    --fc-accent: #7aa2ff;
+
+    --fc-border: #262a31;
+    --fc-border-strong: #3a4049;
+  }
+}
+
+:root[data-theme='dark'] {
+  --fc-bg: #101216;
+  --fc-bg-raised: #171a1f;
+  --fc-bg-sunken: #0b0d10;
+  --fc-bg-total: #1d2127;
+
+  --fc-text-primary: #eef0f4;
+  --fc-text-secondary: #b3b9c4;
+  --fc-text-muted: #7e8695;
+
+  --fc-danger: #ff6b6b;
+  --fc-warning: #e0a53a;
+  --fc-success: #4fc07c;
+  --fc-accent: #7aa2ff;
+
+  --fc-border: #262a31;
+  --fc-border-strong: #3a4049;
+}
+
+/* ---- Base --------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fc-bg);
+  color: var(--fc-text-primary);
+  font-family: var(--fc-font);
+  font-size: var(--fc-text-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Every figure in the product, everywhere. Without this, digits have different
+ * widths and a column of numbers visibly jumps as values change — design
+ * system §8 calls this half of a financial interface.
+ */
+.fc-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}

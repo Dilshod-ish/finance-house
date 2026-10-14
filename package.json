@@ -23,7 +23,10 @@
     "infra:up": "docker compose -f docker/docker-compose.yml up -d",
     "infra:down": "docker compose -f docker/docker-compose.yml down",
     "api": "pnpm --filter @fincore/api start",
-    "api:dev": "pnpm --filter @fincore/api dev"
+    "api:dev": "pnpm --filter @fincore/api dev",
+    "web": "pnpm --filter @fincore/web start",
+    "web:dev": "pnpm --filter @fincore/web dev",
+    "test:e2e": "pnpm --filter @fincore/web test:e2e"
   },
   "devDependencies": {
     "@fincore/eslint-config": "workspace:*",

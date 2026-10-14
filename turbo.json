@@ -6,7 +6,11 @@
     "NODE_ENV",
     "PORT",
     "FINCORE_INSECURE_ORG_HEADER",
-    "CORS_ORIGINS"
+    "CORS_ORIGINS",
+    "FINCORE_API_URL",
+    "FINCORE_ORG_ID",
+    "FINCORE_WEB_URL",
+    "PLAYWRIGHT_BROWSERS_PATH"
   ],
   "tasks": {
     "build": {
@@ -41,6 +45,11 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": false
     }
   }
 }
