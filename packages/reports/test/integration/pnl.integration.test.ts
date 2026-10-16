@@ -6,12 +6,10 @@ import { createTestDatabase, type TestDatabase } from '@fincore/db/testing';
 import { seedDemo, type SeedResult } from '@fincore/seed';
 import { Money, auditMessages, currency, declaredKeys, isoDate } from '@fincore/shared';
 import {
-  BALANCE_SHEET,
   PNL,
   PNL_ROLES,
   rolesForBalanceSheetLine,
   REPORT_MESSAGES,
-  REPORT_MESSAGE_KEYS,
   createReports,
   priorPeriod,
   type PnlReport,
@@ -205,17 +203,11 @@ describe('getPnl', () => {
     expect(row(demo, 'revenue').amount?.isPositive()).toBe(true);
   });
 
-  it('translates every label any report structure asks for, with none left over', () => {
-    // Audited over both structures at once: a per-structure audit would call
-    // the other report's keys unused.
-    const keys = declaredKeys([
-      ...BALANCE_SHEET.map((spec) => spec.labelKey),
-      ...PNL.map((spec) => spec.labelKey),
-    ]);
-    const { missing, unused } = auditMessages(REPORT_MESSAGES, keys);
-    expect(missing).toEqual([]);
-    expect(unused).toEqual([]);
-    expect(keys).toEqual([...REPORT_MESSAGE_KEYS].sort());
+  it('translates every label this structure asks for', () => {
+    // The unused-key half lives in the cash-flow suite, which audits every
+    // structure at once; a per-structure audit calls the others' keys unused.
+    const keys = declaredKeys(PNL.map((spec) => spec.labelKey));
+    expect(auditMessages(REPORT_MESSAGES, keys).missing).toEqual([]);
   });
 
   it('matches the checked-in golden file', async () => {

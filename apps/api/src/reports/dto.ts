@@ -19,11 +19,20 @@ export const reconciliationQuerySchema = z.object({
   from: isoDateSchema,
   to: isoDateSchema,
   legalEntityId: idListSchema,
+  accountId: idListSchema,
+});
+
+export const cashFlowQuerySchema = z.object({
+  from: isoDateSchema,
+  to: isoDateSchema,
+  legalEntityId: idListSchema,
+  accountId: idListSchema,
+  grouping: z.enum(['none', 'article', 'direction', 'counterparty', 'account']).default('none'),
 });
 
 export const drilldownQuerySchema = z.object({
   /** Which report the line belongs to — it decides how `line` is resolved. */
-  report: z.enum(['pnl', 'balance-sheet']),
+  report: z.enum(['pnl', 'balance-sheet', 'cash-flow']),
   /** A line code from that report's structure. Never a list of roles. */
   line: z.string().min(1),
   /** Omitted for a balance-sheet line, which is cumulative. */
@@ -38,4 +47,5 @@ export const drilldownQuerySchema = z.object({
 export type BalanceSheetQueryDto = z.output<typeof balanceSheetQuerySchema>;
 export type PnlQueryDto = z.output<typeof pnlQuerySchema>;
 export type ReconciliationQueryDto = z.output<typeof reconciliationQuerySchema>;
+export type CashFlowQueryDto = z.output<typeof cashFlowQuerySchema>;
 export type DrilldownQueryDto = z.output<typeof drilldownQuerySchema>;

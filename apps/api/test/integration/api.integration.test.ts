@@ -4,7 +4,7 @@ import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { createTestDatabase, type TestDatabase } from '@fincore/db/testing';
 import { seedDemo, type SeedResult } from '@fincore/seed';
-import { BALANCE_SHEET, PNL, REPORT_MESSAGES } from '@fincore/reports';
+import { BALANCE_SHEET, CASH_FLOW, PNL, REPORT_MESSAGES } from '@fincore/reports';
 import type { Messages } from '@fincore/shared';
 import { AppModule } from '../../src/app.module.js';
 import { ORG_HEADER } from '../../src/org-context/org-context.js';
@@ -12,6 +12,8 @@ import type { Env } from '../../src/config/env.js';
 import type { LegalEntityDto } from '../../src/meta/meta.controller.js';
 import type {
   BalanceSheetDto,
+  CashFlowDto,
+  CashFlowReconciliationDto,
   LedgerLineDto,
   PnlDto,
   ReconciliationDto,
@@ -201,6 +203,74 @@ describe('GET /v1/reports/balance-sheet', () => {
     expect(lines.some((line) => !line.isDrillable)).toBe(true);
     for (const line of lines) {
       expect(line.isDrillable).toBe(!line.isTotal);
+    }
+  });
+});
+
+describe('GET /v1/reports/cash-flow', () => {
+  it('returns a column per month and every structure line', async () => {
+    const { status, body } = await get<{ reports: CashFlowDto[] }>(
+      `/v1/reports/cash-flow?from=${FROM}&to=${TO}`,
+    );
+    expect(status).toBe(200);
+    const report = firstReport(body.reports);
+    expect(report.periods).toEqual(['2026-01', '2026-02', '2026-03']);
+    expect(report.rows.map((row) => row.code)).toEqual(CASH_FLOW.map((spec) => spec.code));
+    for (const row of report.rows) {
+      expect(row.amounts).toHaveLength(3);
+      expect(row.total.amount).toMatch(STORAGE_AMOUNT);
+    }
+  });
+
+  it('serializes every amount as a string, never a JSON number (I7)', async () => {
+    const { text } = await get<{ reports: CashFlowDto[] }>(
+      `/v1/reports/cash-flow?from=${FROM}&to=${TO}&grouping=article`,
+    );
+    expect(text).not.toMatch(/"amount":-?\d/);
+  });
+
+  it('breaks down by the dimension asked for, and not otherwise', async () => {
+    const plain = await get<{ reports: CashFlowDto[] }>(
+      `/v1/reports/cash-flow?from=${FROM}&to=${TO}`,
+    );
+    const operatingIn = (body: { reports: CashFlowDto[] }) =>
+      firstReport(body.reports).rows.find((row) => row.code === 'operating.in');
+    expect(operatingIn(plain.body)?.breakdown).toEqual([]);
+
+    const grouped = await get<{ reports: CashFlowDto[] }>(
+      `/v1/reports/cash-flow?from=${FROM}&to=${TO}&grouping=counterparty`,
+    );
+    expect(operatingIn(grouped.body)?.breakdown.length).toBeGreaterThan(0);
+  });
+
+  it('marks balances as not drillable — a position is not a list of entries', async () => {
+    const { body } = await get<{ reports: CashFlowDto[] }>(
+      `/v1/reports/cash-flow?from=${FROM}&to=${TO}`,
+    );
+    const rows = firstReport(body.reports).rows;
+    expect(rows.find((row) => row.code === 'openingCash')?.isDrillable).toBe(false);
+    expect(rows.find((row) => row.code === 'operating.in')?.isDrillable).toBe(true);
+  });
+
+  it('ties to the ledger cash balance (PRD §7.5)', async () => {
+    const { body } = await get<{ checks: CashFlowReconciliationDto[] }>(
+      `/v1/reports/cash-flow/reconciliation?from=${FROM}&to=${TO}`,
+    );
+    expect(body.checks.length).toBeGreaterThan(0);
+    for (const check of body.checks) {
+      expect(check.residual.amount).toBe('0.0000');
+      expect(check.closingCash.amount).toBe(check.ledgerCash.amount);
+    }
+  });
+
+  it('opens the entries behind a cash-flow line, with roles from the structure', async () => {
+    const { status, body } = await get<{ lines: LedgerLineDto[] }>(
+      `/v1/reports/drilldown?report=cash-flow&line=operating.in&from=${FROM}&to=${TO}`,
+    );
+    expect(status).toBe(200);
+    expect(body.lines.length).toBeGreaterThan(0);
+    for (const line of body.lines) {
+      expect(line.sourceType.length).toBeGreaterThan(0);
     }
   });
 });

@@ -103,6 +103,31 @@ const ROWS = {
     'Dividends and owner draws',
   ],
   'pnl.retained': ['Taqsimlanmagan foyda', 'Нераспределённая прибыль', 'Retained for the period'],
+  // Cash flow (ДДС) — architecture §7.1.
+  'cf.openingCash': ['Davr boshiga pul', 'Деньги на начало периода', 'Cash at start of period'],
+  'cf.closingCash': ['Davr oxiriga pul', 'Деньги на конец периода', 'Cash at end of period'],
+  'cf.operating': ['Operatsion faoliyat', 'Операционная деятельность', 'Operating activities'],
+  'cf.operating.in': ['Operatsion tushumlar', 'Операционные поступления', 'Operating receipts'],
+  'cf.operating.out': ['Operatsion to‘lovlar', 'Операционные выплаты', 'Operating payments'],
+  'cf.investing': ['Investitsion faoliyat', 'Инвестиционная деятельность', 'Investing activities'],
+  'cf.investing.in': ['Investitsion tushumlar', 'Инвестиционные поступления', 'Investing receipts'],
+  'cf.investing.out': ['Investitsion to‘lovlar', 'Инвестиционные выплаты', 'Investing payments'],
+  'cf.financing': ['Moliyaviy faoliyat', 'Финансовая деятельность', 'Financing activities'],
+  'cf.financing.in': ['Moliyaviy tushumlar', 'Финансовые поступления', 'Financing receipts'],
+  'cf.financing.out': ['Moliyaviy to‘lovlar', 'Финансовые выплаты', 'Financing payments'],
+  'cf.netFlow': ['Sof pul oqimi', 'Чистый денежный поток', 'Net cash flow'],
+  'cf.transfer': [
+    'Hisoblar o‘rtasida o‘tkazmalar',
+    'Переводы между счетами',
+    'Transfers between own accounts',
+  ],
+  'cf.transfer.in': ['Kelib tushdi', 'Поступило', 'Transferred in'],
+  'cf.transfer.out': ['Yuborildi', 'Отправлено', 'Transferred out'],
+  'cf.nonCashChange': [
+    'Kurs farqi va boshqa pulsiz o‘zgarishlar',
+    'Курсовая разница и прочие неденежные изменения',
+    'FX and other non-cash changes',
+  ],
 } as const satisfies Record<string, readonly [string, string, string]>;
 
 export type ReportMessageKey = keyof typeof ROWS;

@@ -5,7 +5,7 @@ import { LANGUAGES, type Language, type Translate } from '@/lib/language';
 export interface ShellProps {
   readonly language: Language;
   readonly translate: Translate;
-  readonly active: 'pnl' | 'balanceSheet' | 'checks';
+  readonly active: 'cashFlow' | 'pnl' | 'balanceSheet' | 'checks';
   readonly title: string;
   readonly subtitle?: string;
   readonly controls?: ReactNode;
@@ -13,6 +13,7 @@ export interface ShellProps {
 }
 
 const NAV = [
+  { key: 'cashFlow', href: '/reports/cash-flow', labelKey: 'nav.cashFlow' },
   { key: 'pnl', href: '/reports/pnl', labelKey: 'nav.pnl' },
   { key: 'balanceSheet', href: '/reports/balance-sheet', labelKey: 'nav.balanceSheet' },
   { key: 'checks', href: '/reports/checks', labelKey: 'nav.checks' },

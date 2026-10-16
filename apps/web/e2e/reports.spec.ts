@@ -9,6 +9,8 @@ import { expect, test } from '@playwright/test';
  */
 const NET_PROFIT_ROUNDED = '1 859 049 257';
 const NET_PROFIT_EXACT = '1 859 049 256,50';
+/** The balance sheet's cash line, reached instead through the cash flow. */
+const CLOSING_CASH = '2 191 476 833';
 const PERIOD = 'from=2026-01-01&to=2026-03-31';
 
 /** The UI separates groups with a narrow no-break space; tests compare plainly. */
@@ -42,6 +44,32 @@ test('the P&L renders, and every figure opens the entries behind it (I3)', async
 
   await panel.getByRole('button', { name: 'Yopish' }).click();
   await expect(panel).toBeHidden();
+});
+
+test('the cash flow has a column per month and ties to the ledger', async ({ page }) => {
+  await page.goto(`/reports/cash-flow?${PERIOD}`);
+
+  await expect(page.getByRole('heading', { name: 'Pul oqimi' })).toBeVisible();
+  await expect(page.getByText('Sverka o‘tdi')).toBeVisible();
+
+  for (const month of ['2026-01', '2026-02', '2026-03']) {
+    await expect(page.getByRole('columnheader', { name: month })).toBeVisible();
+  }
+
+  // Closing cash is the balance sheet's cash line, by a different route.
+  const closing = page.getByRole('row').filter({ hasText: 'Davr oxiriga pul' }).first();
+  expect(normalize(await closing.innerText())).toContain(CLOSING_CASH);
+
+  // A month's figure opens the entries behind that month alone (I3, I6).
+  const operating = page.getByRole('row').filter({ hasText: 'Operatsion tushumlar' }).first();
+  await operating.getByRole('button').first().click();
+
+  const panel = page.getByRole('complementary');
+  await expect(panel).toBeVisible();
+  const drilldown = page.getByTestId('drilldown-table');
+  await expect(drilldown).toBeVisible();
+  // Dated by cash_date and scoped to the clicked month alone (I6).
+  await expect(drilldown.getByRole('row').nth(1)).toContainText('.01.2026');
 });
 
 test('the balance sheet ties, and says so', async ({ page }) => {

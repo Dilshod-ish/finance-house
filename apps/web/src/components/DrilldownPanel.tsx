@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/period';
 import { translator, type Language } from '@/lib/language';
 
 export interface DrilldownRequest {
-  readonly report: 'pnl' | 'balance-sheet';
+  readonly report: 'pnl' | 'balance-sheet' | 'cash-flow';
   readonly line: string;
   readonly label: string;
   readonly from?: string;

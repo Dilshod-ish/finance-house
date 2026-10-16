@@ -83,6 +83,47 @@ export interface LedgerLineDto {
   readonly memo: string | null;
 }
 
+export interface CashFlowBreakdownDto {
+  readonly key: string;
+  readonly label: string | null;
+  readonly articleId: string | null;
+  readonly directionId: string | null;
+  readonly counterpartyId: string | null;
+  readonly accountId: string;
+  readonly amounts: readonly MoneyDto[];
+  readonly total: MoneyDto;
+}
+
+export interface CashFlowRowDto {
+  readonly code: string;
+  readonly labelKey: string;
+  readonly level: number;
+  readonly kind: string;
+  readonly amounts: readonly MoneyDto[];
+  readonly total: MoneyDto;
+  readonly isDrillable: boolean;
+  readonly breakdown: readonly CashFlowBreakdownDto[];
+}
+
+export interface CashFlowDto {
+  readonly from: string;
+  readonly to: string;
+  readonly currency: string;
+  readonly grouping: string;
+  readonly periods: readonly string[];
+  readonly rows: readonly CashFlowRowDto[];
+}
+
+export interface CashFlowReconciliationDto {
+  readonly currency: string;
+  readonly netFlow: MoneyDto;
+  readonly nonCashChange: MoneyDto;
+  readonly closingCash: MoneyDto;
+  readonly ledgerCash: MoneyDto;
+  readonly residual: MoneyDto;
+  readonly isReconciled: boolean;
+}
+
 export interface LegalEntityDto {
   readonly id: string;
   readonly name: string;
@@ -125,6 +166,14 @@ export const getPnl = (search: URLSearchParams): Promise<{ reports: PnlDto[] }> 
 
 export const getBalanceSheet = (search: URLSearchParams): Promise<{ reports: BalanceSheetDto[] }> =>
   apiGet('/v1/reports/balance-sheet', search);
+
+export const getCashFlow = (search: URLSearchParams): Promise<{ reports: CashFlowDto[] }> =>
+  apiGet('/v1/reports/cash-flow', search);
+
+export const getCashFlowReconciliation = (
+  search: URLSearchParams,
+): Promise<{ checks: CashFlowReconciliationDto[] }> =>
+  apiGet('/v1/reports/cash-flow/reconciliation', search);
 
 export const getReconciliation = (
   search: URLSearchParams,

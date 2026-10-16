@@ -12,6 +12,7 @@ const ROWS = {
   'unit.trillion': ['trln', 'трлн', 'T'],
 
   'nav.pnl': ['Daromad va xarajatlar', 'Доходы и расходы', 'Profit and loss'],
+  'nav.cashFlow': ['Pul oqimi', 'Движение денег', 'Cash flow'],
   'nav.balanceSheet': ['Balans', 'Баланс', 'Balance sheet'],
   'nav.checks': ['Tekshiruv', 'Проверка', 'Checks'],
 
@@ -28,12 +29,15 @@ const ROWS = {
   'grouping.none': ['Kesimsiz', 'Без разреза', 'None'],
   'grouping.article': ['Modda', 'Статья', 'Article'],
   'grouping.direction': ["Yo'nalish", 'Направление', 'Direction'],
+  'grouping.counterparty': ['Kontragent', 'Контрагент', 'Counterparty'],
+  'grouping.account': ['Hisob', 'Счёт', 'Account'],
   'grouping.direction_article': [
     "Yo'nalish × modda",
     'Направление × статья',
     'Direction × article',
   ],
 
+  'table.total': ['Jami', 'Итого', 'Total'],
   'table.line': ['Ko‘rsatkich', 'Показатель', 'Line'],
   'table.amount': ['Summa', 'Сумма', 'Amount'],
   'table.prior': ['Oldingi davr', 'Пред. период', 'Prior'],

@@ -7,6 +7,8 @@ export interface PeriodControlsProps {
   readonly from: string;
   readonly to: string;
   readonly grouping?: string;
+  /** Which groupings this report offers; they differ per report. */
+  readonly groupings?: readonly string[];
   readonly compare?: boolean;
 }
 
@@ -22,6 +24,7 @@ export function PeriodControls({
   from,
   to,
   grouping,
+  groupings = ['none', 'article', 'direction', 'direction_article'],
   compare,
 }: PeriodControlsProps): JSX.Element {
   return (
@@ -39,7 +42,7 @@ export function PeriodControls({
         <label className="fc-field">
           <span>{translate('grouping.label')}</span>
           <select name="grouping" defaultValue={grouping} className="fc-control">
-            {['none', 'article', 'direction', 'direction_article'].map((option) => (
+            {groupings.map((option) => (
               <option key={option} value={option}>
                 {translate(`grouping.${option}`)}
               </option>

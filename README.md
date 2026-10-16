@@ -3,8 +3,8 @@
 Boshqaruv hisobi platformasi. O'zbekiston MSB uchun, multi-region arxitektura bilan.
 
 Turborepo + pnpm monorepo. Yadro — `packages/ledger` (posting engine) va
-`packages/db` (sxema, RLS, invariantlar). Ustida `packages/reports` (Balans,
-ОПиУ), `apps/api` (NestJS) va `apps/web` (Next.js). `inventory`, `importers`,
+`packages/db` (sxema, RLS, invariantlar). Ustida `packages/reports` (ДДС,
+ОПиУ, Balans), `apps/api` (NestJS) va `apps/web` (Next.js). `inventory`, `importers`,
 `ai` hali bo'sh — chegara sifatida band, stub yozilmagan.
 
 **Autentifikatsiya hali yo'q.** API tenant'ni `x-fincore-org` sarlavhasidan
@@ -45,7 +45,7 @@ FINCORE_ORG_ID=2f6a1e10-0000-4000-8000-000000000001 \
 pnpm web:dev
 ```
 
-`http://localhost:3000` → ОПиУ. Chap menyuda Balans va Tekshiruv.
+`http://localhost:3000` → ДДС. Chap menyuda ОПиУ, Balans va Tekshiruv.
 Har qanday raqamni bosing — ortidagi provodkalar o'ngdan ochiladi.
 
 E2E (API va veb ishlab turishi shart):
@@ -73,13 +73,13 @@ docs/
 apps/
   api/                         NestJS. Hech narsa hisoblamaydi — tekshiradi va
                                domen paketlarini chaqiradi
-  web/                         Next.js 15. Uchta ekran + drill-down paneli
+  web/                         Next.js 15. To'rtta ekran + drill-down paneli
 packages/
   shared/                      Money (Decimal), Result, IsoDate
   db/                          Drizzle sxema, migratsiyalar, RLS, seed
   ledger/                      posting engine — journal_* ga yozadigan yagona joy
-  reports/                     Balans va ОПиУ. `/structure` — sof kirish nuqtasi
-                               (brauzer uchun, ma'lumotlar bazasisiz)
+  reports/                     ДДС, ОПиУ, Balans. `/structure` — sof kirish
+                               nuqtasi (brauzer uchun, ma'lumotlar bazasisiz)
   ui/                          dizayn tizimi: tokenlar, raqam formati, jadval
   inventory/ importers/ ai/    chegara sifatida band, hozircha bo'sh
   region-packs/_contract, uz/  RegionPack interfeysi va O'zbekiston paketi

@@ -21,6 +21,18 @@ export type {
 } from './pnl/build.js';
 export * from './pnl/structure.js';
 
+export { buildCashFlow, periodsBetween } from './cashflow/build.js';
+export type {
+  BuildCashFlowOptions,
+  CashFlowBreakdownRow,
+  CashFlowFact,
+  CashFlowGrouping,
+  CashFlowReport,
+  CashFlowRow,
+  CashPosition,
+} from './cashflow/build.js';
+export * from './cashflow/structure.js';
+
 export { rolesForLine, type RoleSource } from './structure-roles.js';
 
 export { REPORT_MESSAGES, REPORT_MESSAGE_KEYS, type ReportMessageKey } from './messages.js';

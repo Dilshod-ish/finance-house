@@ -3,11 +3,15 @@ import type { Database } from '@fincore/db';
 import type { GlAccountRole } from '@fincore/shared';
 import {
   BALANCE_SHEET,
+  CASH_FLOW,
   PNL,
+  contraRolesForCashFlowLine,
   createReports,
   rolesForBalanceSheetLine,
   rolesForPnlLine,
   type BalanceSheetReport,
+  type CashFlowReconciliation,
+  type CashFlowReport,
   type LedgerLine,
   type PnlReconciliation,
   type PnlReport,
@@ -16,6 +20,7 @@ import {
 import { DATABASE } from '../db/db.module.js';
 import type {
   BalanceSheetQueryDto,
+  CashFlowQueryDto,
   DrilldownQueryDto,
   PnlQueryDto,
   ReconciliationQueryDto,
@@ -53,6 +58,30 @@ export class ReportsService {
     });
   }
 
+  cashFlow(orgId: string, query: CashFlowQueryDto): Promise<CashFlowReport[]> {
+    return this.reports.getCashFlow({
+      orgId,
+      from: query.from,
+      to: query.to,
+      grouping: query.grouping,
+      ...(query.legalEntityId === undefined ? {} : { legalEntityIds: query.legalEntityId }),
+      ...(query.accountId === undefined ? {} : { accountIds: query.accountId }),
+    });
+  }
+
+  cashFlowReconciliation(
+    orgId: string,
+    query: ReconciliationQueryDto,
+  ): Promise<CashFlowReconciliation[]> {
+    return this.reports.reconcileCashFlow({
+      orgId,
+      from: query.from,
+      to: query.to,
+      ...(query.legalEntityId === undefined ? {} : { legalEntityIds: query.legalEntityId }),
+      ...(query.accountId === undefined ? {} : { accountIds: query.accountId }),
+    });
+  }
+
   reconciliation(orgId: string, query: ReconciliationQueryDto): Promise<PnlReconciliation[]> {
     return this.reports.reconcilePnl({
       orgId,
@@ -85,13 +114,25 @@ export class ReportsService {
     // Checked against the structure rather than caught from it: a try/catch
     // here would report a real bug inside the resolver as the client's mistake
     // (CLAUDE.md §9 — never swallow an error in a financial path).
-    const structure = report === 'pnl' ? PNL : BALANCE_SHEET;
-    if (!structure.some((spec) => spec.code === line)) {
+    const structures = {
+      pnl: PNL,
+      'balance-sheet': BALANCE_SHEET,
+      'cash-flow': CASH_FLOW,
+    } as const;
+    const resolvers = {
+      pnl: rolesForPnlLine,
+      'balance-sheet': rolesForBalanceSheetLine,
+      // A cash-flow line resolves to the roles on the *other* side of each
+      // entry, because that is what its section means.
+      'cash-flow': contraRolesForCashFlowLine,
+    } as const;
+
+    if (!structures[report].some((spec) => spec.code === line)) {
       throw new BadRequestException({
         error: 'unknown_report_line',
         message: `No line '${line}' in the ${report} report.`,
       });
     }
-    return report === 'pnl' ? rolesForPnlLine(line) : rolesForBalanceSheetLine(line);
+    return resolvers[report](line);
   }
 }

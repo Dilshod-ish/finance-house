@@ -1,5 +1,7 @@
 import type {
   BalanceSheetReport,
+  CashFlowReconciliation,
+  CashFlowReport,
   LedgerLine,
   PnlReconciliation,
   PnlReport,
@@ -129,6 +131,93 @@ export function reconciliationDto(check: PnlReconciliation): ReconciliationDto {
     contributions: money(check.contributions),
     broughtForward: money(check.broughtForward),
     draws: money(check.draws),
+    residual: money(check.residual),
+    isReconciled: check.isReconciled,
+  };
+}
+
+export interface CashFlowBreakdownDto {
+  readonly key: string;
+  readonly label: string | null;
+  readonly articleId: string | null;
+  readonly directionId: string | null;
+  readonly counterpartyId: string | null;
+  readonly accountId: string;
+  readonly amounts: readonly MoneyDto[];
+  readonly total: MoneyDto;
+}
+
+export interface CashFlowRowDto {
+  readonly code: string;
+  readonly labelKey: string;
+  readonly level: number;
+  readonly kind: string;
+  /** One figure per period column, in `periods` order. */
+  readonly amounts: readonly MoneyDto[];
+  readonly total: MoneyDto;
+  readonly isDrillable: boolean;
+  readonly breakdown: readonly CashFlowBreakdownDto[];
+}
+
+export interface CashFlowDto {
+  readonly from: string;
+  readonly to: string;
+  readonly currency: string;
+  readonly grouping: string;
+  readonly periods: readonly string[];
+  readonly rows: readonly CashFlowRowDto[];
+}
+
+export function cashFlowDto(report: CashFlowReport): CashFlowDto {
+  return {
+    from: report.from,
+    to: report.to,
+    currency: report.currency,
+    grouping: report.grouping,
+    periods: [...report.periods],
+    rows: report.rows.map((row) => ({
+      code: row.code,
+      labelKey: row.labelKey,
+      level: row.level,
+      kind: row.kind,
+      amounts: row.amounts.map(money),
+      total: money(row.total),
+      // A balance is a position and a non-cash line has no movement behind it
+      // in the cash sense; neither opens a list of cash entries.
+      isDrillable: row.kind === 'flow' || row.kind === 'subtotal',
+      breakdown: row.breakdown.map((part) => ({
+        key: part.key,
+        label: part.label,
+        articleId: part.articleId,
+        directionId: part.directionId,
+        counterpartyId: part.counterpartyId,
+        accountId: part.accountId,
+        amounts: part.amounts.map(money),
+        total: money(part.total),
+      })),
+    })),
+  };
+}
+
+export interface CashFlowReconciliationDto {
+  readonly currency: string;
+  readonly netFlow: MoneyDto;
+  readonly nonCashChange: MoneyDto;
+  readonly closingCash: MoneyDto;
+  readonly ledgerCash: MoneyDto;
+  readonly residual: MoneyDto;
+  readonly isReconciled: boolean;
+}
+
+export function cashFlowReconciliationDto(
+  check: CashFlowReconciliation,
+): CashFlowReconciliationDto {
+  return {
+    currency: check.currency,
+    netFlow: money(check.netFlow),
+    nonCashChange: money(check.nonCashChange),
+    closingCash: money(check.closingCash),
+    ledgerCash: money(check.ledgerCash),
     residual: money(check.residual),
     isReconciled: check.isReconciled,
   };
