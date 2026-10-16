@@ -4,6 +4,7 @@ import { getCashFlow, getCashFlowReconciliation } from '@/lib/api';
 import { readLanguage, translator } from '@/lib/language';
 import { formatPeriod, readPeriod } from '@/lib/period';
 import { Shell } from '@/components/Shell';
+import { readTenant } from '@/lib/tenant';
 import { CashFlowTable } from '@/components/CashFlowTable';
 import { PeriodControls } from '@/components/PeriodControls';
 import { Figure } from '@/components/Figures';
@@ -21,20 +22,26 @@ export default async function CashFlowPage({ searchParams }: PageProps): Promise
   const params = await searchParams;
   const language = readLanguage(one(params['lang']));
   const translate = translator(language);
+  const tenant = await readTenant(one(params['org']));
   const period = readPeriod(one(params['from']), one(params['to']));
   const groupingParam = one(params['grouping']) ?? 'none';
   const grouping = GROUPINGS.includes(groupingParam) ? groupingParam : 'none';
 
   const search = new URLSearchParams({ from: period.from, to: period.to, grouping });
   const [{ reports }, { checks }] = await Promise.all([
-    getCashFlow(search),
-    getCashFlowReconciliation(new URLSearchParams({ from: period.from, to: period.to })),
+    getCashFlow(search, tenant.orgId),
+    getCashFlowReconciliation(
+      new URLSearchParams({ from: period.from, to: period.to }),
+      tenant.orgId,
+    ),
   ]);
 
   return (
     <Shell
       language={language}
       translate={translate}
+      orgs={tenant.orgs}
+      orgId={tenant.orgId}
       active="cashFlow"
       title={translate('nav.cashFlow')}
       subtitle={formatPeriod(period)}
@@ -42,6 +49,7 @@ export default async function CashFlowPage({ searchParams }: PageProps): Promise
         <PeriodControls
           translate={translate}
           language={language}
+          orgId={tenant.orgId}
           from={period.from}
           to={period.to}
           grouping={grouping}
@@ -116,7 +124,7 @@ export default async function CashFlowPage({ searchParams }: PageProps): Promise
                 />
               </div>
 
-              <CashFlowTable report={report} language={language} />
+              <CashFlowTable report={report} language={language} orgId={tenant.orgId} />
             </section>
           );
         })

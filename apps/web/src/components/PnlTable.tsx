@@ -40,9 +40,10 @@ export interface PnlTableProps {
    * boundary, and the message tables are static strings either side.
    */
   readonly language: Language;
+  readonly orgId: string;
 }
 
-export function PnlTable({ report, language }: PnlTableProps): JSX.Element {
+export function PnlTable({ report, language, orgId }: PnlTableProps): JSX.Element {
   const [open, setOpen] = useState<DrilldownRequest | null>(null);
   const translate = translator(language);
   const hasComparison = report.comparison !== null;
@@ -150,6 +151,7 @@ export function PnlTable({ report, language }: PnlTableProps): JSX.Element {
         <DrilldownPanel
           request={open}
           language={language}
+          orgId={orgId}
           onClose={() => {
             setOpen(null);
           }}

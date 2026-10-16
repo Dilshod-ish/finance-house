@@ -4,6 +4,7 @@ import type { Language, Translate } from '@/lib/language';
 export interface PeriodControlsProps {
   readonly translate: Translate;
   readonly language: Language;
+  readonly orgId: string;
   readonly from: string;
   readonly to: string;
   readonly grouping?: string;
@@ -21,6 +22,7 @@ export interface PeriodControlsProps {
 export function PeriodControls({
   translate,
   language,
+  orgId,
   from,
   to,
   grouping,
@@ -30,6 +32,7 @@ export function PeriodControls({
   return (
     <form method="get" className="shell__controls">
       <input type="hidden" name="lang" value={language} />
+      <input type="hidden" name="org" value={orgId} />
       <label className="fc-field">
         <span>{translate('period.from')}</span>
         <input type="date" name="from" defaultValue={from} className="fc-control" />
@@ -71,13 +74,15 @@ export function PeriodControls({
 export interface AsOfControlsProps {
   readonly translate: Translate;
   readonly language: Language;
+  readonly orgId: string;
   readonly asOf: string;
 }
 
-export function AsOfControls({ translate, language, asOf }: AsOfControlsProps): JSX.Element {
+export function AsOfControls({ translate, language, orgId, asOf }: AsOfControlsProps): JSX.Element {
   return (
     <form method="get" className="shell__controls">
       <input type="hidden" name="lang" value={language} />
+      <input type="hidden" name="org" value={orgId} />
       <label className="fc-field">
         <span>{translate('period.asOf')}</span>
         <input type="date" name="asOf" defaultValue={asOf} className="fc-control" />

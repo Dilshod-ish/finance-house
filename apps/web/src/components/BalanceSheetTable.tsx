@@ -10,10 +10,16 @@ export interface BalanceSheetTableProps {
   readonly report: BalanceSheetDto;
   /** The language, not a translator — a function cannot cross the boundary. */
   readonly language: Language;
+  readonly orgId: string;
   readonly side: 'assets' | 'liabilities_and_equity';
 }
 
-export function BalanceSheetTable({ report, language, side }: BalanceSheetTableProps): JSX.Element {
+export function BalanceSheetTable({
+  report,
+  language,
+  orgId,
+  side,
+}: BalanceSheetTableProps): JSX.Element {
   const [open, setOpen] = useState<DrilldownRequest | null>(null);
   const translate = translator(language);
 
@@ -59,6 +65,7 @@ export function BalanceSheetTable({ report, language, side }: BalanceSheetTableP
         <DrilldownPanel
           request={open}
           language={language}
+          orgId={orgId}
           onClose={() => {
             setOpen(null);
           }}

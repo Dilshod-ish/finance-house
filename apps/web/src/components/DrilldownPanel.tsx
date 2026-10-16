@@ -19,6 +19,7 @@ export interface DrilldownRequest {
 export interface DrilldownPanelProps {
   readonly request: DrilldownRequest;
   readonly language: Language;
+  readonly orgId: string;
   readonly onClose: () => void;
 }
 
@@ -34,7 +35,12 @@ type State =
  * behind it, each carrying its source marker. Loads through a Next route
  * handler, so the tenant header stays on the server.
  */
-export function DrilldownPanel({ request, language, onClose }: DrilldownPanelProps): JSX.Element {
+export function DrilldownPanel({
+  request,
+  language,
+  orgId,
+  onClose,
+}: DrilldownPanelProps): JSX.Element {
   const [state, setState] = useState<State>({ status: 'loading' });
   const translate = translator(language);
 
@@ -44,6 +50,7 @@ export function DrilldownPanel({ request, language, onClose }: DrilldownPanelPro
       report: request.report,
       line: request.line,
       to: request.to,
+      org: orgId,
       limit: String(LIMIT),
     });
     if (request.from !== undefined) search.set('from', request.from);
@@ -70,7 +77,7 @@ export function DrilldownPanel({ request, language, onClose }: DrilldownPanelPro
     return () => {
       controller.abort();
     };
-  }, [request]);
+  }, [request, orgId]);
 
   return (
     <Panel

@@ -148,8 +148,8 @@ export class ApiError extends Error {
  * stale or empty figures because a call failed is the worst outcome here, so
  * failures propagate to the error state.
  */
-export async function apiGet<T>(path: string, search: URLSearchParams): Promise<T> {
-  const { apiBaseUrl, orgId } = readConfig();
+export async function apiGet<T>(path: string, search: URLSearchParams, orgId: string): Promise<T> {
+  const { apiBaseUrl } = readConfig();
   const url = `${apiBaseUrl}${path}?${search.toString()}`;
   const response = await fetch(url, {
     headers: { 'x-fincore-org': orgId, accept: 'application/json' },
@@ -161,26 +161,43 @@ export async function apiGet<T>(path: string, search: URLSearchParams): Promise<
   return (await response.json()) as T;
 }
 
-export const getPnl = (search: URLSearchParams): Promise<{ reports: PnlDto[] }> =>
-  apiGet('/v1/reports/pnl', search);
+export const getPnl = (search: URLSearchParams, orgId: string): Promise<{ reports: PnlDto[] }> =>
+  apiGet('/v1/reports/pnl', search, orgId);
 
-export const getBalanceSheet = (search: URLSearchParams): Promise<{ reports: BalanceSheetDto[] }> =>
-  apiGet('/v1/reports/balance-sheet', search);
+export const getBalanceSheet = (
+  search: URLSearchParams,
+  orgId: string,
+): Promise<{ reports: BalanceSheetDto[] }> => apiGet('/v1/reports/balance-sheet', search, orgId);
 
-export const getCashFlow = (search: URLSearchParams): Promise<{ reports: CashFlowDto[] }> =>
-  apiGet('/v1/reports/cash-flow', search);
+export const getCashFlow = (
+  search: URLSearchParams,
+  orgId: string,
+): Promise<{ reports: CashFlowDto[] }> => apiGet('/v1/reports/cash-flow', search, orgId);
 
 export const getCashFlowReconciliation = (
   search: URLSearchParams,
+  orgId: string,
 ): Promise<{ checks: CashFlowReconciliationDto[] }> =>
-  apiGet('/v1/reports/cash-flow/reconciliation', search);
+  apiGet('/v1/reports/cash-flow/reconciliation', search, orgId);
 
 export const getReconciliation = (
   search: URLSearchParams,
-): Promise<{ checks: ReconciliationDto[] }> => apiGet('/v1/reports/reconciliation', search);
+  orgId: string,
+): Promise<{ checks: ReconciliationDto[] }> => apiGet('/v1/reports/reconciliation', search, orgId);
 
-export const getDrilldown = (search: URLSearchParams): Promise<{ lines: LedgerLineDto[] }> =>
-  apiGet('/v1/reports/drilldown', search);
+export const getDrilldown = (
+  search: URLSearchParams,
+  orgId: string,
+): Promise<{ lines: LedgerLineDto[] }> => apiGet('/v1/reports/drilldown', search, orgId);
 
-export const getLegalEntities = (): Promise<{ legalEntities: LegalEntityDto[] }> =>
-  apiGet('/v1/meta/legal-entities', new URLSearchParams());
+export const getLegalEntities = (orgId: string): Promise<{ legalEntities: LegalEntityDto[] }> =>
+  apiGet('/v1/meta/legal-entities', new URLSearchParams(), orgId);
+
+export interface OrganizationDto {
+  readonly id: string;
+  readonly name: string;
+  readonly baseCurrency: string;
+}
+
+export const getOrganization = (orgId: string): Promise<OrganizationDto> =>
+  apiGet('/v1/meta/organization', new URLSearchParams(), orgId);

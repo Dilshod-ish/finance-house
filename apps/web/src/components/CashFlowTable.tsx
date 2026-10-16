@@ -22,9 +22,10 @@ function monthRange(period: string): { from: string; to: string } {
 export interface CashFlowTableProps {
   readonly report: CashFlowDto;
   readonly language: Language;
+  readonly orgId: string;
 }
 
-export function CashFlowTable({ report, language }: CashFlowTableProps): JSX.Element {
+export function CashFlowTable({ report, language, orgId }: CashFlowTableProps): JSX.Element {
   const [open, setOpen] = useState<DrilldownRequest | null>(null);
   const translate = translator(language);
 
@@ -111,6 +112,7 @@ export function CashFlowTable({ report, language }: CashFlowTableProps): JSX.Ele
         <DrilldownPanel
           request={open}
           language={language}
+          orgId={orgId}
           onClose={() => {
             setOpen(null);
           }}

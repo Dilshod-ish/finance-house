@@ -99,6 +99,7 @@ const ROWS = {
   'balance.unbalanced': ['Balans teng emas', 'Баланс не сходится', 'Balance sheet does not tie'],
 
   'entity.all': ['Barcha yuridik shaxslar', 'Все юрлица', 'All legal entities'],
+  'org.label': ['Firma', 'Компания', 'Organization'],
   'language.label': ['Til', 'Язык', 'Language'],
 } as const;
 

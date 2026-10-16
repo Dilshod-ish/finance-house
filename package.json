@@ -26,7 +26,8 @@
     "api:dev": "pnpm --filter @fincore/api dev",
     "web": "pnpm --filter @fincore/web start",
     "web:dev": "pnpm --filter @fincore/web dev",
-    "test:e2e": "pnpm --filter @fincore/web test:e2e"
+    "test:e2e": "pnpm --filter @fincore/web test:e2e",
+    "db:showcase": "pnpm --filter @fincore/seed db:showcase"
   },
   "devDependencies": {
     "@fincore/eslint-config": "workspace:*",

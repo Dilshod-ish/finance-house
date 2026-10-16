@@ -119,7 +119,10 @@ export type Tone = 'neutral' | 'danger' | 'success';
  * positive figure is not painted green just for being positive.
  */
 export function amountTone(value: string): Tone {
-  return new Decimal(value).isNegative() ? 'danger' : 'neutral';
+  // `lessThan(0)`, not `isNegative()`: decimal.js calls negative zero
+  // negative, and a subtotal that cancels out arrives as `-0.0000`. Painting
+  // that red says money was lost when nothing happened at all.
+  return new Decimal(value).lessThan(0) ? 'danger' : 'neutral';
 }
 
 /**

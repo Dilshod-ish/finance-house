@@ -3,3 +3,4 @@ export { DEMO_IDS, DEMO_WINDOW, rateOn, type ReferenceData, type SeedWindow } fr
 export { type SeededJournal } from './journal.js';
 export * from './ids.js';
 export * from './pack-resolution.js';
+export * from './showcase/index.js';

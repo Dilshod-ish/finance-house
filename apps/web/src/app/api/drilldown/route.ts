@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDrilldown } from '@/lib/api';
+import { activeOrgId } from '@/lib/config';
 
 /**
  * Proxies the drill-down to the API so the browser never carries the tenant
@@ -16,6 +17,8 @@ export async function GET(request: Request): Promise<NextResponse> {
     }
   }
 
-  const { lines } = await getDrilldown(search);
+  // Resolved against the allow-list, never taken as given.
+  const orgId = activeOrgId(incoming.get('org') ?? undefined);
+  const { lines } = await getDrilldown(search, orgId);
   return NextResponse.json({ lines });
 }

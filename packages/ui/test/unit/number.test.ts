@@ -134,6 +134,12 @@ describe('tone — colour carries meaning or nothing', () => {
     expect(amountTone('1000000')).toBe('neutral');
   });
 
+  it('does not call a subtotal that cancelled out a loss', () => {
+    // A transfer section nets to exactly nothing and arrives as `-0.0000`.
+    expect(amountTone('-0')).toBe('neutral');
+    expect(amountTone('-0.0000')).toBe('neutral');
+  });
+
   it('reads a delta against what good looks like on that line', () => {
     expect(deltaTone('100', true)).toBe('success');
     expect(deltaTone('100', false)).toBe('danger');

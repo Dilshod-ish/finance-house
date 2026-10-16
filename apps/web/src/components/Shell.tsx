@@ -2,10 +2,17 @@ import type { JSX, ReactNode } from 'react';
 import Link from 'next/link';
 import { LANGUAGES, type Language, type Translate } from '@/lib/language';
 
+export interface OrgOption {
+  readonly id: string;
+  readonly name: string;
+}
+
 export interface ShellProps {
   readonly language: Language;
   readonly translate: Translate;
   readonly active: 'cashFlow' | 'pnl' | 'balanceSheet' | 'checks';
+  readonly orgs: readonly OrgOption[];
+  readonly orgId: string;
   readonly title: string;
   readonly subtitle?: string;
   readonly controls?: ReactNode;
@@ -23,6 +30,8 @@ export function Shell({
   language,
   translate,
   active,
+  orgs,
+  orgId,
   title,
   subtitle,
   controls,
@@ -32,11 +41,34 @@ export function Shell({
     <div className="shell">
       <nav className="shell__nav">
         <div className="shell__brand">FinCore</div>
+        {/*
+          Switching organization is a plain GET form, like everything else
+          here: the tenant lives in the URL, so a view is shareable and the
+          back button works. The server only honours an id it was configured
+          for — see `activeOrgId`.
+        */}
+        <form method="get" className="fc-field" style={{ width: '100%' }}>
+          <span>{translate('org.label')}</span>
+          <select name="org" defaultValue={orgId} className="fc-control" style={{ width: '100%' }}>
+            {orgs.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name}
+              </option>
+            ))}
+          </select>
+          <input type="hidden" name="lang" value={language} />
+          <noscript>
+            <button type="submit" className="fc-button">
+              OK
+            </button>
+          </noscript>
+        </form>
+
         <div className="shell__links">
           {NAV.map((item) => (
             <Link
               key={item.key}
-              href={`${item.href}?lang=${language}`}
+              href={`${item.href}?lang=${language}&org=${orgId}`}
               className="shell__link"
               aria-current={item.key === active ? 'page' : undefined}
             >

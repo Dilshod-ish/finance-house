@@ -4,6 +4,7 @@ import { getBalanceSheet } from '@/lib/api';
 import { readLanguage, translator } from '@/lib/language';
 import { formatDate, readAsOf } from '@/lib/period';
 import { Shell } from '@/components/Shell';
+import { readTenant } from '@/lib/tenant';
 import { BalanceSheetTable } from '@/components/BalanceSheetTable';
 import { AsOfControls } from '@/components/PeriodControls';
 
@@ -18,18 +19,23 @@ export default async function BalanceSheetPage({ searchParams }: PageProps): Pro
   const params = await searchParams;
   const language = readLanguage(one(params['lang']));
   const translate = translator(language);
+  const tenant = await readTenant(one(params['org']));
   const asOf = readAsOf(one(params['asOf']));
 
-  const { reports } = await getBalanceSheet(new URLSearchParams({ asOf }));
+  const { reports } = await getBalanceSheet(new URLSearchParams({ asOf }), tenant.orgId);
 
   return (
     <Shell
       language={language}
       translate={translate}
+      orgs={tenant.orgs}
+      orgId={tenant.orgId}
       active="balanceSheet"
       title={translate('nav.balanceSheet')}
       subtitle={formatDate(asOf)}
-      controls={<AsOfControls translate={translate} language={language} asOf={asOf} />}
+      controls={
+        <AsOfControls translate={translate} language={language} orgId={tenant.orgId} asOf={asOf} />
+      }
     >
       {reports.length === 0 ? (
         <EmptyState translate={translate} />
@@ -60,10 +66,16 @@ export default async function BalanceSheetPage({ searchParams }: PageProps): Pro
                 gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
               }}
             >
-              <BalanceSheetTable report={report} language={language} side="assets" />
               <BalanceSheetTable
                 report={report}
                 language={language}
+                orgId={tenant.orgId}
+                side="assets"
+              />
+              <BalanceSheetTable
+                report={report}
+                language={language}
+                orgId={tenant.orgId}
                 side="liabilities_and_equity"
               />
             </div>

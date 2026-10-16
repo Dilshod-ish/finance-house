@@ -4,6 +4,7 @@ import { getReconciliation } from '@/lib/api';
 import { readLanguage, translator } from '@/lib/language';
 import { formatPeriod, readPeriod } from '@/lib/period';
 import { Shell } from '@/components/Shell';
+import { readTenant } from '@/lib/tenant';
 import { PeriodControls } from '@/components/PeriodControls';
 
 interface PageProps {
@@ -23,10 +24,12 @@ export default async function ChecksPage({ searchParams }: PageProps): Promise<J
   const params = await searchParams;
   const language = readLanguage(one(params['lang']));
   const translate = translator(language);
+  const tenant = await readTenant(one(params['org']));
   const period = readPeriod(one(params['from']), one(params['to']));
 
   const { checks } = await getReconciliation(
     new URLSearchParams({ from: period.from, to: period.to }),
+    tenant.orgId,
   );
 
   const rows = [
@@ -42,6 +45,8 @@ export default async function ChecksPage({ searchParams }: PageProps): Promise<J
     <Shell
       language={language}
       translate={translate}
+      orgs={tenant.orgs}
+      orgId={tenant.orgId}
       active="checks"
       title={translate('check.title')}
       subtitle={formatPeriod(period)}
@@ -49,6 +54,7 @@ export default async function ChecksPage({ searchParams }: PageProps): Promise<J
         <PeriodControls
           translate={translate}
           language={language}
+          orgId={tenant.orgId}
           from={period.from}
           to={period.to}
         />

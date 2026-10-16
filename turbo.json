@@ -1,16 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
-    "DATABASE_URL",
-    "TEST_DATABASE_URL",
-    "NODE_ENV",
-    "PORT",
-    "FINCORE_INSECURE_ORG_HEADER",
     "CORS_ORIGINS",
+    "DATABASE_URL",
     "FINCORE_API_URL",
+    "FINCORE_INSECURE_ORG_HEADER",
     "FINCORE_ORG_ID",
+    "FINCORE_ORG_IDS",
     "FINCORE_WEB_URL",
-    "PLAYWRIGHT_BROWSERS_PATH"
+    "NODE_ENV",
+    "PLAYWRIGHT_BROWSERS_PATH",
+    "PORT",
+    "TEST_DATABASE_URL"
   ],
   "tasks": {
     "build": {

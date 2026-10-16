@@ -4,6 +4,7 @@ import { getPnl } from '@/lib/api';
 import { readLanguage, translator } from '@/lib/language';
 import { readPeriod, formatPeriod } from '@/lib/period';
 import { Shell } from '@/components/Shell';
+import { readTenant } from '@/lib/tenant';
 import { PnlTable } from '@/components/PnlTable';
 import { PeriodControls } from '@/components/PeriodControls';
 import { Figure } from '@/components/Figures';
@@ -21,6 +22,7 @@ export default async function PnlPage({ searchParams }: PageProps): Promise<JSX.
   const params = await searchParams;
   const language = readLanguage(one(params['lang']));
   const translate = translator(language);
+  const tenant = await readTenant(one(params['org']));
   const period = readPeriod(one(params['from']), one(params['to']));
   const groupingParam = one(params['grouping']) ?? 'none';
   const grouping = GROUPINGS.includes(groupingParam) ? groupingParam : 'none';
@@ -30,12 +32,14 @@ export default async function PnlPage({ searchParams }: PageProps): Promise<JSX.
   if (compare) {
     search.set('compareTo', 'prior');
   }
-  const { reports } = await getPnl(search);
+  const { reports } = await getPnl(search, tenant.orgId);
 
   return (
     <Shell
       language={language}
       translate={translate}
+      orgs={tenant.orgs}
+      orgId={tenant.orgId}
       active="pnl"
       title={translate('nav.pnl')}
       subtitle={formatPeriod(period)}
@@ -43,6 +47,7 @@ export default async function PnlPage({ searchParams }: PageProps): Promise<JSX.
         <PeriodControls
           translate={translate}
           language={language}
+          orgId={tenant.orgId}
           from={period.from}
           to={period.to}
           grouping={grouping}
@@ -111,7 +116,7 @@ export default async function PnlPage({ searchParams }: PageProps): Promise<JSX.
                 </Notice>
               ) : null}
 
-              <PnlTable report={report} language={language} />
+              <PnlTable report={report} language={language} orgId={tenant.orgId} />
             </section>
           );
         })
