@@ -72,9 +72,12 @@ export async function seedShowcaseReference(
   return db.transaction(async (tx) => {
     await tx.execute(sql`select set_config('app.org_id', ${orgId}, true)`);
 
+    // The legal form comes from the pack, never from this package (§4).
+    const displayName = `${profile.tradeName} ${company.legalForm.code}`;
+
     await tx.insert(organization).values({
       id: orgId,
-      name: profile.tradeName,
+      name: displayName,
       // What the organization reports in — USD here, not the pack's default.
       baseCurrency: profile.functionalCurrency,
       countryCode: pack.countryCode,
@@ -94,7 +97,7 @@ export async function seedShowcaseReference(
     await tx.insert(legalEntity).values({
       id: profile.legalEntityId,
       orgId,
-      name: profile.tradeName,
+      name: displayName,
       legalForm: company.legalForm.code,
       taxRegime: company.taxRegime.code,
       functionalCurrency: profile.functionalCurrency,

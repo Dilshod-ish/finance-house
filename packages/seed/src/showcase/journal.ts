@@ -823,7 +823,7 @@ export async function seedShowcaseJournal(
         cashOn: refitDay,
         kind: 'cash',
         sourceType: 'supplier_invoice',
-        description: 'Chilonzor store refit',
+        description: 'North store refit',
         legs: [
           {
             glCode: glFixedAsset,
