@@ -19,3 +19,6 @@ apps/web/.next
 apps/web/test-results
 apps/web/playwright-report
 next-env.d.ts
+
+# Generated import templates (regenerate with `pnpm templates <dir>`)
+shablonlar/

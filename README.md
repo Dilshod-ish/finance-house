@@ -4,7 +4,8 @@ Boshqaruv hisobi platformasi. O'zbekiston MSB uchun, multi-region arxitektura bi
 
 Turborepo + pnpm monorepo. Yadro — `packages/ledger` (posting engine) va
 `packages/db` (sxema, RLS, invariantlar). Ustida `packages/reports` (ДДС,
-ОПиУ, Balans), `apps/api` (NestJS) va `apps/web` (Next.js). `inventory`, `importers`,
+ОПиУ, Balans), `apps/api` (NestJS) va `apps/web` (Next.js).
+`packages/importers` — yuklash shablonlari va ularning validatori. `inventory`,
 `ai` hali bo'sh — chegara sifatida band, stub yozilmagan.
 
 **Autentifikatsiya hali yo'q.** API tenant'ni `x-fincore-org` sarlavhasidan
@@ -54,6 +55,40 @@ E2E (API va veb ishlab turishi shart):
 pnpm test:e2e
 ```
 
+### Ma'lumot yuklash shablonlari
+
+Uch shablon, uch tilda (`uz`, `ru`, `en`) generatsiya qilinadi:
+
+```bash
+pnpm templates ./shablonlar        # faqat uz
+pnpm templates ./shablonlar all    # uz + ru + en
+```
+
+| Fayl                   | Nima uchun                                                                |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `1-boshlangich.xlsx`   | firma, hisoblar, kirish qoldiqlari, moddalar, yo'nalishlar, kontragentlar |
+| `2-operatsiyalar.xlsx` | kassa, sotuv, xarid, oylik, asosiy vositalar, kreditlar, valyuta kurslari |
+| `bank-kochirma.xlsx`   | bitta hisob bo'yicha bank ko'chirmasi                                     |
+
+Har bir shablonda `Yo'riqnoma` varag'i bor, majburiy ustunlar sarlavhasi `*`
+bilan belgilangan, `NAMUNA` qatori — to'ldirilgan misol (yuklashda tashlab
+ketiladi). Ro'yxatli ustunlar (valyuta, yo'nalish, soliq rejimi, huquqiy shakl)
+Excel'ning o'z tanlov ro'yxati bilan cheklangan — qiymatlar region-pack'dan
+olinadi.
+
+To'ldirilgan faylni yuklashdan oldin tekshirish:
+
+```bash
+pnpm validate ./shablonlar/bank-kochirma.uz.xlsx
+```
+
+Validator shablon turini varaq nomlaridan aniqlaydi, so'ng: majburiy
+maydonlar, sana va summa formati, ro'yxatdan tashqari qiymatlar, bitta
+qatorda ham kirim ham chiqim, takrorlangan hujjat raqami, hamda
+`ochilish qoldigi + kirim − chiqim = yopilish qoldigi` tengligini tekshiradi.
+Summalar `12 500,00` yoki `12500.00` ko'rinishida yoziladi; `12,500` kabi
+ikki ma'noli yozuv **rad etiladi** — bu I7 ning yuklash chegarasidagi aksi.
+
 `make help` — barcha buyruqlar. Har bir `make` maqsadi aynan shu pnpm skriptini
 chaqiradi, ya'ni CI va odam bir xil buyruqni ishlatadi.
 
@@ -81,7 +116,9 @@ packages/
   reports/                     ДДС, ОПиУ, Balans. `/structure` — sof kirish
                                nuqtasi (brauzer uchun, ma'lumotlar bazasisiz)
   ui/                          dizayn tizimi: tokenlar, raqam formati, jadval
-  inventory/ importers/ ai/    chegara sifatida band, hozircha bo'sh
+  importers/                   yuklash shablonlari (xlsx) + validator. Sof
+                               funksiyalar: baytlar -> DTO. Hech narsa yozmaydi
+  inventory/ ai/               chegara sifatida band, hozircha bo'sh
   region-packs/_contract, uz/  RegionPack interfeysi va O'zbekiston paketi
   seed/                        deterministik demo ma'lumot + smoke testlar
 tooling/

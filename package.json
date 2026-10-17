@@ -27,7 +27,9 @@
     "web": "pnpm --filter @fincore/web start",
     "web:dev": "pnpm --filter @fincore/web dev",
     "test:e2e": "pnpm --filter @fincore/web test:e2e",
-    "db:showcase": "pnpm --filter @fincore/seed db:showcase"
+    "db:showcase": "pnpm --filter @fincore/seed db:showcase",
+    "templates": "pnpm --filter @fincore/importers templates",
+    "validate": "pnpm --filter @fincore/importers validate"
   },
   "devDependencies": {
     "@fincore/eslint-config": "workspace:*",
