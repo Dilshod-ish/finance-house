@@ -133,7 +133,9 @@ export const BANK_STATEMENT_TEMPLATE: TemplateSpec = {
             'Остаток на конец. Система считает по строкам и сверяет с этим числом.',
             'The balance at the end. The rows are added up and checked against it.',
           ],
-          required({ width: 20 }),
+          // Opening plus the one example receipt: the example row set has to
+          // satisfy the balance rule the sheet is about to enforce.
+          required({ width: 20, example: '25 000,00' }),
         ),
       ],
     },
@@ -189,6 +191,9 @@ export const BANK_STATEMENT_TEMPLATE: TemplateSpec = {
             'Сумма, списанная со счёта. Если это приход — оставьте пустым.',
             'Money out. Leave empty when the row is a receipt.',
           ],
+          // The example row is a receipt, so this stays empty: a person who
+          // copies the row must not learn to fill both sides at once.
+          { example: '' },
         ),
         counterpartyColumn(),
         column(

@@ -224,6 +224,60 @@ describe('checkStatementBalances — what the opening and closing figures are fo
   it('stays quiet when the bank stated no balances', () => {
     expect(checkStatementBalances({}, rows(['100', null]))).toEqual([]);
   });
+
+  /*
+   * The template tells people to write `12 500,00`. Decimal rejects that
+   * string outright, so a balance check reading raw cell text would throw on
+   * a file filled exactly as instructed.
+   */
+  it('reads amounts the way the template asks for them', () => {
+    expect(
+      checkStatementBalances(
+        header('84 000,00', '92 650,00'),
+        rows(['12 500,00', null], [null, '3 850,00']),
+      ),
+    ).toEqual([]);
+  });
+
+  it('states the gap when grouped figures do not tie', () => {
+    // 84 000 + 12 500 = 96 500, but the bank says 96 000.
+    const problems = checkStatementBalances(
+      header('84 000,00', '96 000,00'),
+      rows(['12 500,00', null]),
+    );
+    expect(problems).toHaveLength(1);
+    expect(problems[0]?.message.uz).toContain('500.00');
+  });
+
+  /*
+   * An unreadable figure is already reported against its own column, so the
+   * arithmetic stands down instead of reporting the same cell twice — and
+   * never by throwing. This goes through `validateSheet` because that is how
+   * the figures reach this function: an unreadable cell arrives as `null`,
+   * indistinguishable from an empty one except by `row.unreadable`.
+   */
+  it('stands down on a figure it cannot read', () => {
+    const sheet = statementSheet('Kochirma');
+    const read = validateSheet(sheet, [
+      { date: '2026-01-05', receipt: '12,500' },
+      { date: '2026-01-14', payment: '4 200,00' },
+    ]);
+    expect(read.problems.filter((p) => p.severity === 'error')).toHaveLength(1);
+    expect(read.rows[0]?.unreadable).toEqual(['receipt']);
+    expect(checkStatementBalances(header('18 400,00', '26 700,00'), read.rows)).toEqual([]);
+  });
+
+  it('still states the gap once every figure reads', () => {
+    const sheet = statementSheet('Kochirma');
+    const read = validateSheet(sheet, [
+      { date: '2026-01-05', receipt: '12 500,00' },
+      { date: '2026-01-14', payment: '4 200,00' },
+    ]);
+    expect(read.problems).toEqual([]);
+    const problems = checkStatementBalances(header('18 400,00', '20 700,00'), read.rows);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]?.message.uz).toContain('6000.00');
+  });
 });
 
 describe('checkDuplicateDocuments', () => {

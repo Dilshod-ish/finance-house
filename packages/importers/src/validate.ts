@@ -30,6 +30,13 @@ export interface ParsedRow {
   /** 1-based row number in the sheet, for pointing the person at it. */
   readonly row: number;
   readonly values: Readonly<Record<string, string | null>>;
+  /**
+   * Column keys the person filled in but the reader could not make sense of.
+   * A cell that is empty and a cell that reads two ways both land as `null`
+   * in `values`, and a check that adds rows up has to tell them apart: it
+   * must not report a total built on a figure nobody could read.
+   */
+  readonly unreadable?: readonly string[];
 }
 
 export interface SheetResult {
@@ -389,13 +396,16 @@ export function validateSheet(
     // Header on row 1, example on row 2, so the first data row is 3.
     const rowNumber = index + 3;
     const values: Record<string, string | null> = {};
+    const unreadable: string[] = [];
     for (const column of sheet.columns) {
       const allowed = options.allowedValues?.[`${sheet.name}.${column.key}`] ?? null;
-      const result = checkCell(sheet, column, rowNumber, asText(row[column.key]), allowed);
+      const raw = asText(row[column.key]);
+      const result = checkCell(sheet, column, rowNumber, raw, allowed);
       values[column.key] = result.value;
+      if (raw !== null && result.value === null) unreadable.push(column.key);
       problems.push(...result.problems);
     }
-    parsed.push({ row: rowNumber, values });
+    parsed.push({ row: rowNumber, values, unreadable });
   });
 
   return { sheet: sheet.name, rows: parsed, problems };
@@ -415,29 +425,40 @@ export function checkStatementBalances(
   rows: readonly ParsedRow[],
   sheetName = 'Kochirma',
 ): Problem[] {
-  const opening = header['openingBalance'] ?? null;
-  const closing = header['closingBalance'] ?? null;
+  /*
+   * Every figure here goes through `parseAmount`, never `new Decimal` on raw
+   * cell text: the templates tell people to write `12 500,00`, which Decimal
+   * rejects outright. A figure this function cannot read has already been
+   * reported against its own column by `validateSheet`, so the arithmetic
+   * simply stands down rather than reporting the same cell twice.
+   */
+  const amount = (raw: string | null | undefined): Decimal | null => {
+    if (raw === null || raw === undefined || raw.trim() === '') return null;
+    const parsed = parseAmount(raw);
+    return parsed.ok ? parsed.value : null;
+  };
+
+  const opening = amount(header['openingBalance']);
+  const closing = amount(header['closingBalance']);
   if (opening === null || closing === null) {
     return [];
   }
 
+  const lost = (row: { readonly unreadable?: readonly string[] }, ...keys: string[]): boolean =>
+    keys.some((key) => row.unreadable?.includes(key) === true);
+
   let receipts = new Decimal(0);
   let payments = new Decimal(0);
+  let unreadable = false;
   const twoSided: Problem[] = [];
 
   for (const row of rows) {
-    const inbound = row.values['receipt'];
-    const outbound = row.values['payment'];
-    if (inbound !== null && inbound !== undefined) receipts = receipts.plus(inbound);
-    if (outbound !== null && outbound !== undefined) payments = payments.plus(outbound);
-    if (
-      inbound !== null &&
-      inbound !== undefined &&
-      outbound !== null &&
-      outbound !== undefined &&
-      !new Decimal(inbound).isZero() &&
-      !new Decimal(outbound).isZero()
-    ) {
+    const inbound = amount(row.values['receipt']);
+    const outbound = amount(row.values['payment']);
+    if (lost(row, 'receipt', 'payment')) unreadable = true;
+    if (inbound !== null) receipts = receipts.plus(inbound);
+    if (outbound !== null) payments = payments.plus(outbound);
+    if (inbound !== null && outbound !== null && !inbound.isZero() && !outbound.isZero()) {
       twoSided.push(
         problem(
           'error',
@@ -461,9 +482,18 @@ export function checkStatementBalances(
     return twoSided;
   }
 
-  const expected = new Decimal(opening).plus(receipts).minus(payments);
-  const actual = new Decimal(closing);
-  const gap = expected.minus(actual);
+  /*
+   * One figure nobody can read makes the totals meaningless in the same way.
+   * The cell itself is already reported against its column, and "the rows do
+   * not reach the balance" on top of it would send the person looking for a
+   * missing page that is not missing.
+   */
+  if (unreadable) {
+    return [];
+  }
+
+  const expected = opening.plus(receipts).minus(payments);
+  const gap = expected.minus(closing);
   if (gap.isZero()) {
     return [];
   }
@@ -474,14 +504,14 @@ export function checkStatementBalances(
       sheetName,
       null,
       null,
-      `Qatorlar qoldiqqa to'g'ri kelmayapti. ${opening} + ${receipts.toFixed(2)} − ` +
-        `${payments.toFixed(2)} = ${expected.toFixed(2)}, lekin yakuniy qoldiq ${closing}. ` +
+      `Qatorlar qoldiqqa to'g'ri kelmayapti. ${opening.toFixed(2)} + ${receipts.toFixed(2)} − ` +
+        `${payments.toFixed(2)} = ${expected.toFixed(2)}, lekin yakuniy qoldiq ${closing.toFixed(2)}. ` +
         `Farq ${gap.toFixed(2)} — ko'chirma to'liq emas.`,
-      `Строки не сходятся с остатком. ${opening} + ${receipts.toFixed(2)} − ` +
-        `${payments.toFixed(2)} = ${expected.toFixed(2)}, а конечный остаток ${closing}. ` +
+      `Строки не сходятся с остатком. ${opening.toFixed(2)} + ${receipts.toFixed(2)} − ` +
+        `${payments.toFixed(2)} = ${expected.toFixed(2)}, а конечный остаток ${closing.toFixed(2)}. ` +
         `Разница ${gap.toFixed(2)} — выписка неполная.`,
-      `The rows do not reach the stated balance. ${opening} + ${receipts.toFixed(2)} − ` +
-        `${payments.toFixed(2)} = ${expected.toFixed(2)}, but closing is ${closing}. ` +
+      `The rows do not reach the stated balance. ${opening.toFixed(2)} + ${receipts.toFixed(2)} − ` +
+        `${payments.toFixed(2)} = ${expected.toFixed(2)}, but closing is ${closing.toFixed(2)}. ` +
         `Out by ${gap.toFixed(2)}: the statement is incomplete.`,
     ),
   ];

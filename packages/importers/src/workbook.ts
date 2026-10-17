@@ -49,6 +49,18 @@ function allowedFor(column: ColumnSpec, pack: RegionPack): readonly string[] | n
   }
 }
 
+/**
+ * The example a column shows. A column whose list comes from the region pack
+ * declares no example of its own — a legal form or a tax regime written into
+ * a template would be exactly the hardcoding the pack boundary exists to
+ * prevent — so the first value of the resolved list stands in. A required
+ * column with no example at all would teach the person to leave it blank.
+ */
+export function exampleFor(column: ColumnSpec, pack: RegionPack): string {
+  if (column.example !== '') return column.example;
+  return allowedFor(column, pack)?.[0] ?? '';
+}
+
 function writeInstructions(
   book: ExcelJS.Workbook,
   template: TemplateSpec,
@@ -158,7 +170,7 @@ function writeDataSheet(
    */
   spec.columns.forEach((column, index) => {
     const cell = sheet.getCell(2, index + 1);
-    cell.value = column.example;
+    cell.value = exampleFor(column, pack);
     cell.font = { size: 10, italic: true, color: { argb: MUTED } };
   });
   const marker = sheet.getCell(2, spec.columns.length + 1);

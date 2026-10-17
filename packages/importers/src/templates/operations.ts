@@ -91,6 +91,9 @@ export const OPERATIONS_TEMPLATE: TemplateSpec = {
           'payment',
           ['Chiqim', 'Расход', 'Payment'],
           ['Kassadan chiqqan summa.', 'Сумма, выданная из кассы.', 'Money out of the desk.'],
+          // See the bank statement: the example row is a receipt, so the
+          // payment column stays empty rather than teaching both at once.
+          { example: '' },
         ),
         currencyColumn(),
         counterpartyColumn(),

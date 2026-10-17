@@ -10,6 +10,12 @@ export interface ColumnOptions {
   readonly required?: boolean;
   readonly values?: EnumSource;
   readonly width?: number;
+  /**
+   * Overrides the builder's default example. Needed where two columns are
+   * mutually exclusive — a statement row carries a receipt or a payment,
+   * never both, so the example row must not fill both either.
+   */
+  readonly example?: string;
 }
 
 export function column(
@@ -60,7 +66,8 @@ export const amountColumn = (
   label: Labels,
   note: Labels,
   options: ColumnOptions = {},
-): ColumnSpec => column(key, label, 'money', '12 500,00', note, { width: 16, ...options });
+): ColumnSpec =>
+  column(key, label, 'money', options.example ?? '12 500,00', note, { width: 16, ...options });
 
 export const currencyColumn = (options: ColumnOptions = {}): ColumnSpec =>
   column(
