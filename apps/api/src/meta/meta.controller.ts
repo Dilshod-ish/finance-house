@@ -1,6 +1,13 @@
 import { Controller, Get, Inject, NotFoundException, UseGuards } from '@nestjs/common';
-import { asc, eq } from 'drizzle-orm';
-import { legalEntity, organization, setOrgId, type Database } from '@fincore/db';
+import { and, asc, eq } from 'drizzle-orm';
+import {
+  article,
+  direction,
+  legalEntity,
+  organization,
+  setOrgId,
+  type Database,
+} from '@fincore/db';
 import { REPORT_MESSAGES } from '@fincore/reports';
 import { LANGUAGES, type Language, type Messages } from '@fincore/shared';
 import { DATABASE } from '../db/db.module.js';
@@ -11,6 +18,17 @@ export interface OrganizationDto {
   readonly id: string;
   readonly name: string;
   readonly baseCurrency: string;
+}
+
+export interface ArticleDto {
+  readonly id: string;
+  readonly name: string;
+  readonly flowType: string;
+}
+
+export interface DirectionDto {
+  readonly id: string;
+  readonly name: string;
 }
 
 export interface LegalEntityDto {
@@ -73,6 +91,39 @@ export class MetaController {
         legalForm: row.legalForm,
       })),
     };
+  }
+
+  /**
+   * The article picker's options, for classifying an operation. Names, not
+   * locale keys: an article is named by the person who set it up, so there is
+   * nothing to translate (CLAUDE.md §9 — no localized text in the database,
+   * and no pretence that user data is a message key either).
+   */
+  @Get('articles')
+  async articles(@OrgId() orgId: string): Promise<{ articles: ArticleDto[] }> {
+    const rows = await this.db.transaction(async (tx) => {
+      await tx.execute(setOrgId(orgId));
+      return tx
+        .select({ id: article.id, name: article.name, flowType: article.flowType })
+        .from(article)
+        .where(and(eq(article.orgId, orgId), eq(article.isArchived, false)))
+        .orderBy(asc(article.name));
+    });
+    return { articles: rows };
+  }
+
+  /** The direction picker's options. */
+  @Get('directions')
+  async directions(@OrgId() orgId: string): Promise<{ directions: DirectionDto[] }> {
+    const rows = await this.db.transaction(async (tx) => {
+      await tx.execute(setOrgId(orgId));
+      return tx
+        .select({ id: direction.id, name: direction.name })
+        .from(direction)
+        .where(and(eq(direction.orgId, orgId), eq(direction.isArchived, false)))
+        .orderBy(asc(direction.name));
+    });
+    return { directions: rows };
   }
 
   /**

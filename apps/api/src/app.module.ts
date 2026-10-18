@@ -3,6 +3,7 @@ import type { DynamicModule } from '@nestjs/common';
 import { DbModule } from './db/db.module.js';
 import { ENV, readEnv, type Env } from './config/env.js';
 import { MetaModule } from './meta/meta.module.js';
+import { OperationsModule } from './operations/operations.module.js';
 import { OrgContextModule } from './org-context/org-context.module.js';
 import { ReportsModule } from './reports/reports.module.js';
 
@@ -17,7 +18,7 @@ export class AppModule {
     const env = options.env ?? readEnv();
     return {
       module: AppModule,
-      imports: [DbModule.forRoot(), OrgContextModule, ReportsModule, MetaModule],
+      imports: [DbModule.forRoot(), OrgContextModule, ReportsModule, OperationsModule, MetaModule],
       providers: [{ provide: ENV, useValue: env }],
       exports: [ENV],
       global: true,

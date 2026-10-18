@@ -193,6 +193,115 @@ export const getDrilldown = (
 export const getLegalEntities = (orgId: string): Promise<{ legalEntities: LegalEntityDto[] }> =>
   apiGet('/v1/meta/legal-entities', new URLSearchParams(), orgId);
 
+export interface ArticleDto {
+  readonly id: string;
+  readonly name: string;
+  readonly flowType: string;
+}
+
+export interface DirectionDto {
+  readonly id: string;
+  readonly name: string;
+}
+
+export const getArticles = (orgId: string): Promise<{ articles: ArticleDto[] }> =>
+  apiGet('/v1/meta/articles', new URLSearchParams(), orgId);
+
+export const getDirections = (orgId: string): Promise<{ directions: DirectionDto[] }> =>
+  apiGet('/v1/meta/directions', new URLSearchParams(), orgId);
+
+export interface InboxRowDto {
+  readonly id: string;
+  readonly accountId: string;
+  readonly accountName: string;
+  readonly cashDate: string;
+  readonly direction: 'in' | 'out';
+  readonly amount: MoneyDto;
+  readonly counterpartyName: string | null;
+  readonly documentNumber: string | null;
+  readonly purpose: string | null;
+}
+
+export interface BatchSummaryDto {
+  readonly id: string;
+  readonly fileName: string;
+  readonly accountName: string;
+  readonly rowCount: number;
+  readonly postedCount: number;
+  readonly duplicateCount: number;
+  readonly status: 'imported' | 'reverted';
+  readonly createdAt: string;
+}
+
+export interface ImportResultDto {
+  readonly batchId: string;
+  readonly rowCount: number;
+  readonly postedCount: number;
+  readonly unassignedCount: number;
+  readonly unknownArticles: readonly string[];
+  readonly duplicates: readonly {
+    readonly rowNumber: number | null;
+    readonly cashDate: string;
+    readonly amount: MoneyDto;
+    readonly documentNumber: string | null;
+    readonly existingOperationId: string;
+  }[];
+}
+
+/** A refusal, with the validator's findings when the file was the problem. */
+export interface OperationsProblemDto {
+  readonly severity: 'error' | 'warning';
+  readonly sheet: string;
+  readonly row: number | null;
+  readonly column: string | null;
+  readonly message: { readonly uz: string; readonly ru: string; readonly en: string };
+}
+
+export interface OperationsErrorDto {
+  readonly error: string;
+  readonly message: string;
+  readonly problems?: readonly OperationsProblemDto[];
+}
+
+export const getInbox = (orgId: string): Promise<{ operations: InboxRowDto[] }> =>
+  apiGet('/v1/operations/inbox', new URLSearchParams(), orgId);
+
+export const getBatches = (orgId: string): Promise<{ batches: BatchSummaryDto[] }> =>
+  apiGet('/v1/operations/batches', new URLSearchParams(), orgId);
+
+/**
+ * A write. Unlike `apiGet` this returns the refusal body instead of throwing:
+ * the whole point of the import screen is to show the person which row of
+ * which sheet to fix, and an exception would turn that into a blank error page.
+ */
+export async function apiPost(
+  path: string,
+  orgId: string,
+  body: BodyInit,
+  contentType: string,
+  extraHeaders: Readonly<Record<string, string>> = {},
+): Promise<
+  { ok: true; value: unknown } | { ok: false; status: number; error: OperationsErrorDto }
+> {
+  const { apiBaseUrl } = readConfig();
+  const response = await fetch(`${apiBaseUrl}${path}`, {
+    method: 'POST',
+    headers: {
+      'x-fincore-org': orgId,
+      'content-type': contentType,
+      accept: 'application/json',
+      ...extraHeaders,
+    },
+    body,
+    cache: 'no-store',
+  });
+  const payload: unknown = await response.json();
+  if (!response.ok) {
+    return { ok: false, status: response.status, error: payload as OperationsErrorDto };
+  }
+  return { ok: true, value: payload };
+}
+
 export interface OrganizationDto {
   readonly id: string;
   readonly name: string;

@@ -46,13 +46,29 @@ FINCORE_ORG_ID=2f6a1e10-0000-4000-8000-000000000001 \
 pnpm web:dev
 ```
 
-`http://localhost:3000` → ДДС. Chap menyuda ОПиУ, Balans va Tekshiruv.
-Har qanday raqamni bosing — ortidagi provodkalar o'ngdan ochiladi.
+`http://localhost:3000` → ДДС. Chap menyuda ОПиУ, Balans, Tekshiruv va
+**Operatsiyalar**. Har qanday raqamni bosing — ortidagi provodkalar o'ngdan
+ochiladi.
 
-E2E (API va veb ishlab turishi shart):
+«Operatsiyalar» ekrani M2 ning o'zi: ko'chirma yuklanadi, modda topilmagan
+qatorlar navbatda (inbox) qoladi, moddani tayinlash daftarni to'g'rilaydi
+(yozuv qaytariladi va yangisi yoziladi — I4), yuklangan fayl bir bosishda
+bekor qilinadi.
+
+E2E (API va veb ishlab turishi shart). Operatsiyalar to'plami **yozadi**,
+shuning uchun toza seed talab qiladi — aks holda o'zining oldingi yurishini
+dublikat deb ko'radi:
 
 ```bash
+pnpm db:reset
 pnpm test:e2e
+```
+
+E2E fiksturasi (haqiqiy shablondan yasalgan to'ldirilgan ko'chirma) qayta
+generatsiya qilinadi:
+
+```bash
+pnpm --filter @fincore/operations fixture apps/web/e2e/fixtures/statement.xlsx
 ```
 
 ### Ma'lumot yuklash shablonlari
@@ -118,6 +134,10 @@ packages/
   ui/                          dizayn tizimi: tokenlar, raqam formati, jadval
   importers/                   yuklash shablonlari (xlsx) + validator. Sof
                                funksiyalar: baytlar -> DTO. Hech narsa yozmaydi
+  operations/                  ko'chirma -> cash_operation -> daftar. Yozuvni
+                               faqat `ledger` orqali yozadi; dublikat xeshi,
+                               modda tayinlash (reverse+repost), partiyani
+                               bekor qilish
   inventory/ ai/               chegara sifatida band, hozircha bo'sh
   region-packs/_contract, uz/  RegionPack interfeysi va O'zbekiston paketi
   seed/                        deterministik demo ma'lumot + smoke testlar

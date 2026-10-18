@@ -10,7 +10,7 @@ export interface OrgOption {
 export interface ShellProps {
   readonly language: Language;
   readonly translate: Translate;
-  readonly active: 'cashFlow' | 'pnl' | 'balanceSheet' | 'checks';
+  readonly active: 'cashFlow' | 'pnl' | 'balanceSheet' | 'checks' | 'operations';
   readonly orgs: readonly OrgOption[];
   readonly orgId: string;
   readonly title: string;
@@ -24,6 +24,7 @@ const NAV = [
   { key: 'pnl', href: '/reports/pnl', labelKey: 'nav.pnl' },
   { key: 'balanceSheet', href: '/reports/balance-sheet', labelKey: 'nav.balanceSheet' },
   { key: 'checks', href: '/reports/checks', labelKey: 'nav.checks' },
+  { key: 'operations', href: '/operations', labelKey: 'nav.operations' },
 ] as const;
 
 export function Shell({
