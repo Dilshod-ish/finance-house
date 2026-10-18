@@ -300,6 +300,7 @@ describe('contraRolesForCashFlowLine', () => {
         ...rolesForSection('operating'),
         ...rolesForSection('investing'),
         ...rolesForSection('financing'),
+        ...rolesForSection('unassigned'),
       ].sort(),
     );
   });

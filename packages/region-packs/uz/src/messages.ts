@@ -62,6 +62,11 @@ const TRIPLES = {
   'gl.1300': ['Zaxiralar', 'Запасы', 'Inventory'],
   'gl.1400': ['Kiruvchi QQS', 'Входящий НДС', 'Input VAT'],
   'gl.1500': ['Asosiy vositalar', 'Основные средства', 'Fixed assets'],
+  'gl.1900': [
+    'Taqsimlanmagan operatsiyalar',
+    'Нераспределённые операции',
+    'Unclassified operations',
+  ],
   'gl.1510': ['Jamlangan amortizatsiya', 'Накопленная амортизация', 'Accumulated depreciation'],
 
   'gl.2010': [

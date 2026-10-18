@@ -15,6 +15,8 @@ export const TENANT_SCOPED_TABLES = [
   'fx_rate',
   'period_lock',
   'audit_log',
+  'import_batch',
+  'cash_operation',
 ] as const;
 
 export type TenantScopedTable = (typeof TENANT_SCOPED_TABLES)[number];

@@ -73,12 +73,20 @@ export const BALANCE_SHEET: readonly BalanceSheetLineSpec[] = [
     'assets.current.prepaid',
     'assets.current.inventory',
     'assets.current.recoverableTax',
+    'assets.current.unclassified',
   ]),
   line('assets.current.cash', 'bs.assets.cash', 'assets', 2, ['cash', 'money_in_transit']),
   line('assets.current.receivable', 'bs.assets.receivable', 'assets', 2, ['receivable']),
   line('assets.current.prepaid', 'bs.assets.prepaid', 'assets', 2, ['prepaid']),
   line('assets.current.inventory', 'bs.assets.inventory', 'assets', 2, ['inventory']),
   line('assets.current.recoverableTax', 'bs.assets.recoverableTax', 'assets', 2, ['input_vat']),
+  /*
+   * Imported cash nobody has classified yet. It sits on the face of the sheet
+   * rather than inside another line because its size is the measure of how
+   * much of the accounts cannot be trusted yet, and because a non-zero balance
+   * here is a blocker on closing the period.
+   */
+  line('assets.current.unclassified', 'bs.assets.unclassified', 'assets', 2, ['suspense']),
 
   subtotal('assets.noncurrent', 'bs.assets.noncurrent', 'assets', 1, [
     'assets.noncurrent.fixedAssets',

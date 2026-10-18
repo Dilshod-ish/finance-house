@@ -77,6 +77,18 @@ export function inList(values: readonly string[]): string {
 }
 
 /**
+ * Which way money moved on a cash account. The sign lives here, never in the
+ * amount: an amount that may be negative lets the same movement be written two
+ * ways and breaks every sum taken by direction.
+ */
+export const CASH_DIRECTIONS = ['in', 'out'] as const;
+export type CashDirection = (typeof CASH_DIRECTIONS)[number];
+
+/** An import either stands or has been reverted in full. There is no middle. */
+export const IMPORT_BATCH_STATUSES = ['imported', 'reverted'] as const;
+export type ImportBatchStatus = (typeof IMPORT_BATCH_STATUSES)[number];
+
+/**
  * What a report resolves a GL account by, independent of a country's account
  * numbering. A balance sheet groups by role; I5 finds cash accounts by role.
  */
@@ -90,6 +102,16 @@ export type GlAccountRole =
   | 'input_vat'
   | 'fixed_asset'
   | 'accumulated_depreciation'
+  /**
+   * A cash movement that has arrived but has not been classified yet. It is a
+   * clearing account, not a category: it holds the other side of an imported
+   * operation until someone says what the money was for, and it must be zero
+   * before a period can close. Without it an unclassified receipt would either
+   * be kept out of the ledger — leaving the cash flow statement incomplete the
+   * moment a statement is imported — or guessed into a revenue line, which
+   * silently inflates the margin.
+   */
+  | 'suspense'
   // Liabilities
   | 'payable'
   | 'advance_received'
@@ -122,6 +144,7 @@ export const GL_ACCOUNT_ROLES: readonly GlAccountRole[] = [
   'input_vat',
   'fixed_asset',
   'accumulated_depreciation',
+  'suspense',
   'payable',
   'advance_received',
   'payroll_payable',
@@ -156,6 +179,10 @@ export const ROLE_ACCOUNT_TYPE: Readonly<Record<GlAccountRole, GlAccountType>> =
   input_vat: 'asset',
   fixed_asset: 'asset',
   accumulated_depreciation: 'asset',
+  // An asset by placement, though its balance goes either way: a receipt
+  // credits it. A credit balance is read as "cash in that is not yet ours to
+  // call revenue", which is the honest reading.
+  suspense: 'asset',
   payable: 'liability',
   advance_received: 'liability',
   payroll_payable: 'liability',

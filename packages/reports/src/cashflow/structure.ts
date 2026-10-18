@@ -13,7 +13,18 @@ import { rolesForLine } from '../structure-roles.js';
  * different months, and neither is wrong.
  */
 
-export type CashFlowSection = 'operating' | 'investing' | 'financing' | 'transfer';
+export type CashFlowSection =
+  | 'operating'
+  | 'investing'
+  | 'financing'
+  | 'transfer'
+  /**
+   * The money moved, but nobody has said what for yet. Its own section rather
+   * than a share of operating: classifying it by guess would make the three
+   * real sections wrong, and showing its size is what tells the owner how much
+   * of the statement is still unexplained.
+   */
+  | 'unassigned';
 
 /**
  * What a cash movement was *for* is the account on the other side of the
@@ -40,6 +51,9 @@ export const SECTION_BY_CONTRA_ROLE: Readonly<Record<GlAccountRole, CashFlowSect
   share_capital: 'financing',
   owner_draw: 'financing',
   retained_earnings: 'financing',
+
+  // Cash that has arrived and is not classified yet (see `suspense`).
+  suspense: 'unassigned',
 
   // Operating: everything the business does to earn.
   receivable: 'operating',
@@ -158,10 +172,20 @@ export const CASH_FLOW: readonly CashFlowLineSpec[] = [
   flow('financing.in', 'cf.financing.in', 'financing', 'in'),
   flow('financing.out', 'cf.financing.out', 'financing', 'out'),
 
+  /*
+   * Placed last of the four so the statement reads "…and this much we have not
+   * explained yet", and inside the net flow because the money did move: the
+   * bank balance does not wait for the inbox to be emptied.
+   */
+  subtotal('unassigned', 'cf.unassigned', 0, [plus('unassigned.in'), minus('unassigned.out')]),
+  flow('unassigned.in', 'cf.unassigned.in', 'unassigned', 'in'),
+  flow('unassigned.out', 'cf.unassigned.out', 'unassigned', 'out'),
+
   subtotal(NET_FLOW_CODE, 'cf.netFlow', 0, [
     plus('operating'),
     plus('investing'),
     plus('financing'),
+    plus('unassigned'),
   ]),
 
   /*

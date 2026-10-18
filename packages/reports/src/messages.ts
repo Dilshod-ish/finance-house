@@ -20,6 +20,11 @@ const ROWS = {
     'Возмещаемые налоги',
     'Recoverable taxes',
   ],
+  'bs.assets.unclassified': [
+    'Taqsimlanmagan operatsiyalar',
+    'Нераспределённые операции',
+    'Unclassified operations',
+  ],
   'bs.assets.noncurrent': [
     'Aylanmadan tashqari aktivlar',
     'Внеоборотные активы',
@@ -115,6 +120,21 @@ const ROWS = {
   'cf.financing': ['Moliyaviy faoliyat', 'Финансовая деятельность', 'Financing activities'],
   'cf.financing.in': ['Moliyaviy tushumlar', 'Финансовые поступления', 'Financing receipts'],
   'cf.financing.out': ['Moliyaviy to‘lovlar', 'Финансовые выплаты', 'Financing payments'],
+  'cf.unassigned': [
+    'Taqsimlanmagan operatsiyalar',
+    'Нераспределённые операции',
+    'Unclassified operations',
+  ],
+  'cf.unassigned.in': [
+    'Taqsimlanmagan tushumlar',
+    'Нераспределённые поступления',
+    'Unclassified receipts',
+  ],
+  'cf.unassigned.out': [
+    'Taqsimlanmagan to‘lovlar',
+    'Нераспределённые выплаты',
+    'Unclassified payments',
+  ],
   'cf.netFlow': ['Sof pul oqimi', 'Чистый денежный поток', 'Net cash flow'],
   'cf.transfer': [
     'Hisoblar o‘rtasida o‘tkazmalar',

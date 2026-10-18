@@ -92,6 +92,18 @@ export const CHART_OF_ACCOUNTS: readonly GlAccountSeed[] = [
     role: 'fixed_asset',
     accountKind: null,
   },
+  // Clearing account for imported cash that nobody has classified yet. It is
+  // listed with the assets because that is where it is presented; its balance
+  // runs either way and must be zero before a period closes.
+  {
+    code: '1900',
+    nameKey: 'gl.1900',
+    type: 'asset',
+    normalSide: 'D',
+    role: 'suspense',
+    accountKind: null,
+  },
+
   // Contra-asset: a credit balance that reduces fixed assets.
   {
     code: '1510',

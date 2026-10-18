@@ -7,6 +7,7 @@ ASSETS                                           2387581599.5000
     Prepayments made                                      0.0000
     Inventory                                             0.0000
     Recoverable taxes                                     0.0000
+    Unclassified operations                               0.0000
   Non-current assets                                      0.0000
     Fixed assets, net                                     0.0000
 LIABILITIES AND EQUITY                           2387581599.5000

@@ -4,6 +4,8 @@ export * from './columns.js';
 export {
   ACCOUNT_KINDS,
   CASH_ACCOUNT_KINDS,
+  CASH_DIRECTIONS,
+  IMPORT_BATCH_STATUSES,
   COUNTERPARTY_KINDS,
   ENTRY_KINDS,
   FLOW_TYPES,
@@ -14,6 +16,8 @@ export {
   SIDES,
   type AccountKind,
   type CashAccountKind,
+  type CashDirection,
+  type ImportBatchStatus,
   type CounterpartyKind,
   type EntryKind,
   type FlowType,
@@ -26,3 +30,4 @@ export * from './tenancy.js';
 export * from './reference.js';
 export * from './journal.js';
 export * from './control.js';
+export * from './operations.js';
