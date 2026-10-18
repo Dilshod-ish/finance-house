@@ -8,6 +8,7 @@ export type {
   PostEntryLineInput,
   PreparedEntry,
   PreparedLine,
+  ReplaceEntryResult,
   ReverseEntryOptions,
   TrialBalanceQuery,
   TrialBalanceRow,

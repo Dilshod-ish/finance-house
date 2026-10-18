@@ -26,12 +26,25 @@ import type {
   JournalEntryRecord,
   PostEntryInput,
   PreparedLine,
+  ReplaceEntryResult,
   ReverseEntryOptions,
   TrialBalanceQuery,
   TrialBalanceRow,
 } from './types.js';
 
 type Tx = Parameters<Parameters<Database['transaction']>[0]>[0];
+
+/**
+ * A domain refusal on its way out of a transaction. Thrown so the transaction
+ * rolls back, caught immediately by `replaceEntry`, and never seen by a
+ * caller: the refusal comes back as `Err`, like every other expected failure.
+ */
+class Refusal extends Error {
+  constructor(readonly refusal: PostingError) {
+    super(refusal.code);
+    this.name = 'Refusal';
+  }
+}
 
 interface EntryRow {
   id: string;
@@ -87,6 +100,19 @@ export interface Ledger {
     actor: string | null,
     options?: ReverseEntryOptions,
   ): Promise<Result<JournalEntryRecord, PostingError>>;
+  /**
+   * Reverse `entryId` and post `replacement` in one transaction — the only
+   * safe way to change what a posted entry says (I4). Either both land or
+   * neither does.
+   */
+  replaceEntry(
+    orgId: string,
+    entryId: string,
+    reason: string,
+    actor: string | null,
+    replacement: PostEntryInput,
+    options?: ReverseEntryOptions,
+  ): Promise<Result<ReplaceEntryResult, PostingError>>;
   getTrialBalance(query: TrialBalanceQuery): Promise<TrialBalanceRow[]>;
 }
 
@@ -183,13 +209,18 @@ export function createLedger(db: Database): Ledger {
     return rows[0];
   }
 
-  async function postEntry(
+  /**
+   * The body of `postEntry`, taking the transaction rather than opening one.
+   * `replaceEntry` needs a reversal and its replacement to land together, and
+   * a correction that is half-applied is worse than one that is refused.
+   * The caller has already bound the tenant.
+   */
+  async function postIn(
+    tx: Tx,
     input: PostEntryInput,
   ): Promise<Result<JournalEntryRecord, PostingError>> {
     const key = input.idempotencyKey ?? null;
-    return db.transaction(async (tx) => {
-      await bind(tx, input.orgId);
-
+    {
       if (key !== null) {
         // A replay — the same statement imported twice — returns the original
         // entry. A genuinely concurrent duplicate hits the unique index and
@@ -228,19 +259,28 @@ export function createLedger(db: Database): Ledger {
       const row = inserted[0] as EntryRow;
       await insertLines(tx, input.orgId, row.id, prepared.value.lines);
       return ok(toRecord(row, false));
+    }
+  }
+
+  async function postEntry(
+    input: PostEntryInput,
+  ): Promise<Result<JournalEntryRecord, PostingError>> {
+    return db.transaction(async (tx) => {
+      await bind(tx, input.orgId);
+      return postIn(tx, input);
     });
   }
 
-  async function reverseEntry(
+  /** The body of `reverseEntry`; see `postIn` for why it is split out. */
+  async function reverseIn(
+    tx: Tx,
     orgId: string,
     entryId: string,
     reason: string,
     actor: string | null,
     options: ReverseEntryOptions = {},
   ): Promise<Result<JournalEntryRecord, PostingError>> {
-    return db.transaction(async (tx) => {
-      await bind(tx, orgId);
-
+    {
       const originals = await tx
         .select()
         .from(journalEntry)
@@ -333,7 +373,68 @@ export function createLedger(db: Database): Ledger {
         .where(and(eq(journalEntry.orgId, orgId), eq(journalEntry.id, entryId)));
 
       return ok(toRecord(reversalRow, false));
+    }
+  }
+
+  async function reverseEntry(
+    orgId: string,
+    entryId: string,
+    reason: string,
+    actor: string | null,
+    options: ReverseEntryOptions = {},
+  ): Promise<Result<JournalEntryRecord, PostingError>> {
+    return db.transaction(async (tx) => {
+      await bind(tx, orgId);
+      return reverseIn(tx, orgId, entryId, reason, actor, options);
     });
+  }
+
+  /**
+   * Correct a posted entry: reverse it and post its replacement, both or
+   * neither.
+   *
+   * I4 forbids editing a posted entry, so every correction is a reversal plus
+   * a new entry. Doing that as two calls leaves a window in which the ledger
+   * is wrong either way round — reverse first and the cash disappears from the
+   * reports, post first and it is counted twice — and the window is visible to
+   * any reader. One transaction removes it.
+   */
+  async function replaceEntry(
+    orgId: string,
+    entryId: string,
+    reason: string,
+    actor: string | null,
+    replacement: PostEntryInput,
+    options: ReverseEntryOptions = {},
+  ): Promise<Result<ReplaceEntryResult, PostingError>> {
+    /*
+     * Returning an `Err` from a drizzle transaction callback commits it — only
+     * a throw rolls back. The reversal is written before the replacement is
+     * attempted, so a refusal has to leave by throwing, and `Refusal` carries
+     * the typed error back out rather than losing it.
+     */
+    try {
+      const outcome = await db.transaction(async (tx) => {
+        await bind(tx, orgId);
+
+        const reversal = await reverseIn(tx, orgId, entryId, reason, actor, options);
+        if (!reversal.ok) {
+          throw new Refusal(reversal.error);
+        }
+        const posted = await postIn(tx, replacement);
+        if (!posted.ok) {
+          throw new Refusal(posted.error);
+        }
+        return { reversal: reversal.value, replacement: posted.value };
+      });
+      return ok(outcome);
+    } catch (error) {
+      if (error instanceof Refusal) {
+        return err(error.refusal);
+      }
+      // A constraint violation or a lost connection is not a domain refusal.
+      throw error;
+    }
   }
 
   async function getTrialBalance(query: TrialBalanceQuery): Promise<TrialBalanceRow[]> {
@@ -390,5 +491,5 @@ export function createLedger(db: Database): Ledger {
     });
   }
 
-  return { postEntry, reverseEntry, getTrialBalance };
+  return { postEntry, reverseEntry, replaceEntry, getTrialBalance };
 }

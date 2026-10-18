@@ -21,4 +21,11 @@ export {
   type SheetResult,
   type ValidateOptions,
 } from './validate.js';
-export { buildTemplate, exampleFor, packValues, readWorkbook, type ReadSheet } from './workbook.js';
+export {
+  buildTemplate,
+  detectTemplate,
+  exampleFor,
+  packValues,
+  readWorkbook,
+  type ReadSheet,
+} from './workbook.js';

@@ -102,6 +102,12 @@ export interface JournalEntryRecord {
   readonly deduplicated: boolean;
 }
 
+/** What `replaceEntry` produced: the reversal, and the entry that replaced it. */
+export interface ReplaceEntryResult {
+  readonly reversal: JournalEntryRecord;
+  readonly replacement: JournalEntryRecord;
+}
+
 export interface TrialBalanceQuery {
   readonly orgId: string;
   readonly legalEntityIds?: readonly string[];

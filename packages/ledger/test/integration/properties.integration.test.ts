@@ -153,6 +153,55 @@ describe('ledger properties (CLAUDE.md §6)', () => {
     );
   }, 180_000);
 
+  it('replacing an entry leaves what posting the replacement alone would', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.array(posting, { minLength: 1, maxLength: 4 }),
+        posting,
+        posting,
+        async (base, original, replacement) => {
+          // Two organizations with the same history: one gets the wrong
+          // posting and then the correction, the other only the right one.
+          const corrected = await seedOrg(h.client, 'P5a');
+          const direct = await seedOrg(h.client, 'P5b');
+          await postAll(corrected, base);
+          await postAll(direct, base);
+
+          const posted = await ledger.postEntry(inputFor(corrected, original, 90));
+          expect(posted.ok).toBe(true);
+          if (!posted.ok) return;
+
+          const replaced = await ledger.replaceEntry(
+            corrected.orgId,
+            posted.value.id,
+            'property',
+            null,
+            inputFor(corrected, replacement, 91),
+          );
+          expect(replaced.ok).toBe(true);
+
+          const straight = await ledger.postEntry(inputFor(direct, replacement, 91));
+          expect(straight.ok).toBe(true);
+
+          /*
+           * A correction is reversal plus replacement, so every balance must
+           * match the organization that only ever posted the right entry.
+           * Compared over the union of accounts, because the corrected side
+           * also lists the account the wrong entry touched — back at zero,
+           * and a zero balance is the same fact as no row at all.
+           */
+          const left = await balanceMap(corrected.orgId);
+          const right = await balanceMap(direct.orgId);
+          for (const code of new Set([...Object.keys(left), ...Object.keys(right)])) {
+            expect([code, left[code] ?? '0.0000']).toEqual([code, right[code] ?? '0.0000']);
+          }
+          expect(await unbalancedEntryCount(corrected.orgId)).toBe(0);
+        },
+      ),
+      { numRuns: 12 },
+    );
+  }, 180_000);
+
   it('report totals are invariant under the order of posting', async () => {
     await fc.assert(
       fc.asyncProperty(fc.array(posting, { minLength: 2, maxLength: 6 }), async (postings) => {

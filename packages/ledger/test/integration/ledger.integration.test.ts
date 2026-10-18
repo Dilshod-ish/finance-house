@@ -363,6 +363,174 @@ describe('reverseEntry', () => {
   });
 });
 
+describe('replaceEntry', () => {
+  it('reverses and re-posts in one go, leaving one live entry', async () => {
+    const posted = await ledger.postEntry(sale({ accrualDate: isoDate('2027-01-05') }));
+    expect(posted.ok).toBe(true);
+    if (!posted.ok) return;
+
+    const replaced = await ledger.replaceEntry(
+      acme.orgId,
+      posted.value.id,
+      'article assigned',
+      null,
+      sale({ accrualDate: isoDate('2027-01-05'), description: 'reclassified' }),
+    );
+    expect(replaced.ok).toBe(true);
+    if (!replaced.ok) return;
+
+    expect(replaced.value.reversal.reversesId).toBe(posted.value.id);
+    expect(replaced.value.replacement.description).toBe('reclassified');
+
+    // The original is reversed, the replacement is not: exactly one is live.
+    const live = await h.asOrg(
+      acme.orgId,
+      (tx) => tx<{ n: number }[]>`
+        select count(*)::int as n from journal_entry
+         where accrual_date = '2027-01-05'
+           and reversed_by_id is null and kind <> 'reversal'`,
+    );
+    expect(live[0]?.n).toBe(1);
+  });
+
+  it('leaves the ledger exactly as posting the replacement alone would', async () => {
+    const before = await ledger.getTrialBalance({ orgId: acme.orgId });
+
+    const posted = await ledger.postEntry(sale({ accrualDate: isoDate('2027-01-06') }));
+    expect(posted.ok).toBe(true);
+    if (!posted.ok) return;
+
+    const replacement = sale({
+      accrualDate: isoDate('2027-01-06'),
+      lines: [
+        {
+          glAccountId: acme.cashGl,
+          side: 'D',
+          amount: Money.of('1000', UZS),
+          accountId: acme.accountId,
+        },
+        { glAccountId: acme.expenseGl, side: 'C', amount: Money.of('1000', UZS) },
+      ],
+    });
+    const replaced = await ledger.replaceEntry(
+      acme.orgId,
+      posted.value.id,
+      'reclassified',
+      null,
+      replacement,
+    );
+    expect(replaced.ok).toBe(true);
+
+    const after = await ledger.getTrialBalance({ orgId: acme.orgId });
+
+    // Reversal + replacement must net to the replacement on its own. Compare
+    // the movement each GL account saw, not the absolute balances.
+    const movement = (
+      rows: Awaited<ReturnType<typeof ledger.getTrialBalance>>,
+    ): Map<string, string> => new Map(rows.map((r) => [r.glAccountId, r.balance.toStorage()]));
+    const was = movement(before);
+    const now = movement(after);
+
+    const delta = new Map<string, string>();
+    for (const [id, value] of now) {
+      const previous = was.get(id) ?? '0.0000';
+      if (value !== previous) {
+        delta.set(id, Money.of(value, UZS).minus(Money.of(previous, UZS)).toStorage());
+      }
+    }
+    expect([...delta.entries()].sort()).toEqual(
+      [
+        [acme.cashGl, '1000.0000'],
+        [acme.expenseGl, '-1000.0000'],
+      ].sort(),
+    );
+  });
+
+  it('refuses the whole correction when the replacement does not balance', async () => {
+    const posted = await ledger.postEntry(sale({ accrualDate: isoDate('2027-01-07') }));
+    expect(posted.ok).toBe(true);
+    if (!posted.ok) return;
+
+    const before = await countEntries(acme.orgId);
+    const replaced = await ledger.replaceEntry(
+      acme.orgId,
+      posted.value.id,
+      'reclassified',
+      null,
+      sale({
+        accrualDate: isoDate('2027-01-07'),
+        lines: [
+          { glAccountId: acme.cashGl, side: 'D', amount: Money.of('1000', UZS) },
+          { glAccountId: acme.revenueGl, side: 'C', amount: Money.of('999', UZS) },
+        ],
+      }),
+    );
+    expect(replaced.ok).toBe(false);
+    if (!replaced.ok) expect(replaced.error.code).toBe('UNBALANCED');
+
+    // Nothing was written, and the original is still live: a half-applied
+    // correction is worse than a refused one.
+    expect(await countEntries(acme.orgId)).toBe(before);
+    const rows = await h.asOrg(
+      acme.orgId,
+      (tx) => tx<{ reversed_by_id: string | null }[]>`
+        select reversed_by_id from journal_entry where id = ${posted.value.id}`,
+    );
+    expect(rows[0]?.reversed_by_id).toBeNull();
+  });
+
+  it('lets a real fault through instead of dressing it as a refusal', async () => {
+    const posted = await ledger.postEntry(sale({ accrualDate: isoDate('2027-01-09') }));
+    expect(posted.ok).toBe(true);
+    if (!posted.ok) return;
+
+    // A GL account that does not exist passes validation — the validator reads
+    // the entry, not the chart — and fails on the foreign key. That is an
+    // infrastructure fault, not a domain refusal, and must not come back as
+    // Err (CLAUDE.md §9: fail loudly).
+    await expect(
+      ledger.replaceEntry(
+        acme.orgId,
+        posted.value.id,
+        'reclassified',
+        null,
+        sale({
+          accrualDate: isoDate('2027-01-09'),
+          lines: [
+            { glAccountId: randomUUID(), side: 'D', amount: Money.of('1000', UZS) },
+            { glAccountId: acme.revenueGl, side: 'C', amount: Money.of('1000', UZS) },
+          ],
+        }),
+      ),
+    ).rejects.toThrow();
+
+    // And the original is untouched.
+    const rows = await h.asOrg(
+      acme.orgId,
+      (tx) => tx<{ reversed_by_id: string | null }[]>`
+        select reversed_by_id from journal_entry where id = ${posted.value.id}`,
+    );
+    expect(rows[0]?.reversed_by_id).toBeNull();
+  });
+
+  it('refuses when the entry was already reversed', async () => {
+    const posted = await ledger.postEntry(sale({ accrualDate: isoDate('2027-01-08') }));
+    expect(posted.ok).toBe(true);
+    if (!posted.ok) return;
+    await ledger.reverseEntry(acme.orgId, posted.value.id, 'first', null);
+
+    const replaced = await ledger.replaceEntry(
+      acme.orgId,
+      posted.value.id,
+      'again',
+      null,
+      sale({ accrualDate: isoDate('2027-01-08') }),
+    );
+    expect(replaced.ok).toBe(false);
+    if (!replaced.ok) expect(replaced.error.code).toBe('ALREADY_REVERSED');
+  });
+});
+
 describe('getTrialBalance', () => {
   it('sums to zero across every account', async () => {
     const rows = await ledger.getTrialBalance({ orgId: acme.orgId });

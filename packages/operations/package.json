@@ -1,0 +1,49 @@
+{
+  "name": "@fincore/operations",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cash operations: an uploaded statement becomes journal entries, through the ledger and nowhere else.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@fincore/db": "workspace:*",
+    "@fincore/importers": "workspace:*",
+    "@fincore/ledger": "workspace:*",
+    "@fincore/region-pack-contract": "workspace:*",
+    "@fincore/region-pack-uz": "workspace:*",
+    "@fincore/shared": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "postgres": "3.4.9"
+  },
+  "devDependencies": {
+    "@fincore/eslint-config": "workspace:*",
+    "@fincore/tsconfig": "workspace:*",
+    "@testcontainers/postgresql": "12.1.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "eslint": "10.9.1",
+    "testcontainers": "12.1.0",
+    "tsx": "4.23.12",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11",
+    "exceljs": "4.4.0",
+    "@fincore/reports": "workspace:*",
+    "@fincore/seed": "workspace:*"
+  }
+}
